@@ -75,21 +75,14 @@ export default function Privacy() {
           </thead>
           <tbody>
             <tr>
-              <td>Supabase</td>
-              <td>
-                Accounts, sign-in and the database that stores your sprints
-              </td>
-              <td>Tokyo, Japan</td>
+              <td>Google Cloud: Firebase Authentication</td>
+              <td>Sign-in and account emails</td>
+              <td>Google&apos;s global network</td>
             </tr>
             <tr>
-              <td>Vercel</td>
-              <td>Hosting the website and app</td>
-              <td>Tokyo, Japan, with a global network</td>
-            </tr>
-            <tr>
-              <td>Resend</td>
-              <td>Delivering account emails</td>
-              <td>United States</td>
+              <td>Google Cloud: hosting and database</td>
+              <td>Running the website and app, and storing your sprints</td>
+              <td>Region to be confirmed before launch</td>
             </tr>
             <tr>
               <td>Google</td>
