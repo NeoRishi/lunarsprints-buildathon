@@ -33,12 +33,17 @@ CALLER = "web-app"
 
 
 class AgentError(Exception):
-    """A failure the caller may see. Only the code leaves the service."""
+    """A failure the caller may see. Only the code leaves the service.
 
-    def __init__(self, code: str, status: int) -> None:
+    reason is a short provider code (for example RESOURCE_EXHAUSTED) for the
+    service's own logs. It is never a message and never sent to the caller.
+    """
+
+    def __init__(self, code: str, status: int, reason: str | None = None) -> None:
         super().__init__(code)
         self.code = code
         self.status = status
+        self.reason = reason
 
 
 def invalid_output() -> AgentError:
@@ -119,7 +124,7 @@ class AgentRunner:
                     # The event message may quote the answer, so it is dropped.
                     if event.error_code == "ValidationError":
                         raise invalid_output()
-                    raise AgentError("ai_unavailable", 503)
+                    raise AgentError("ai_unavailable", 503, reason=str(event.error_code)[:40])
                 if event.usage_metadata is not None:
                     usage = event.usage_metadata
                 if event.is_final_response():
@@ -166,6 +171,7 @@ class AgentRunner:
             return dump(answer), self._usage(model, meta, started)
         except AgentError as error:
             outcome = error.code
+            error_type = error_type or error.reason
             raise
         except Exception as error:
             outcome = "ai_unavailable"

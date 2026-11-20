@@ -142,3 +142,19 @@ def test_vendor_logs_never_quote_answers(
     with caplog.at_level("DEBUG"), pytest.raises(AgentError):
         run(runner_with(settings, fake))
     assert "private user words" not in caplog.text
+
+
+def test_quota_error_event_is_ai_unavailable_with_a_short_reason(
+    settings: Settings, caplog: pytest.LogCaptureFixture
+) -> None:
+    from google.adk.models.llm_response import LlmResponse
+
+    class QuotaLlm(FakeLlm):
+        async def generate_content_async(self, llm_request, stream=False):  # type: ignore[no-untyped-def,override]
+            yield LlmResponse(error_code="RESOURCE_EXHAUSTED", error_message="quota text")
+
+    with caplog.at_level("INFO", logger="lunarsprints_agents"), pytest.raises(AgentError) as error:
+        run(runner_with(settings, QuotaLlm(model="fake")))
+    assert error.value.code == "ai_unavailable"
+    assert caplog.records[-1].error_type == "RESOURCE_EXHAUSTED"  # type: ignore[attr-defined]
+    assert "quota text" not in caplog.text

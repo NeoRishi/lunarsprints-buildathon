@@ -280,7 +280,8 @@ async def run_case(runner: AgentRunner, contracts: Path, case: Any) -> tuple[str
         answer, usage = await runner.run(role, task, clean["input"], clean["requestId"])
     except AgentError as error:
         status = getattr(error.__cause__, "code", None)
-        detail = f" (provider status {status})" if isinstance(status, int) else ""
+        reason = error.reason or (status if isinstance(status, int) else None)
+        detail = f" ({reason})" if reason else ""
         return role, [f"call failed: {error.code}{detail}"], 0
     failures = []
     for rubric in case.rubrics or []:
