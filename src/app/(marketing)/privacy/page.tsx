@@ -82,14 +82,6 @@ export default function Privacy() {
               <td>Tokyo, Japan</td>
             </tr>
             <tr>
-              <td>OpenAI</td>
-              <td>
-                AI suggestions for goals, steps and replans, and voice
-                transcription
-              </td>
-              <td>United States</td>
-            </tr>
-            <tr>
               <td>Vercel</td>
               <td>Hosting the website and app</td>
               <td>Tokyo, Japan, with a global network</td>
@@ -110,8 +102,6 @@ export default function Privacy() {
       <p>
         This means your data is processed outside India. Each provider handles
         it under its own terms and only to deliver its part of the service.
-        OpenAI’s API terms state that data sent through its API is not used to
-        train its models by default.
       </p>
 
       <h2>How long we keep it</h2>
