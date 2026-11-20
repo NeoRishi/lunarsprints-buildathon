@@ -18,7 +18,9 @@
     "db:migrate:test": "tsx --env-file-if-exists=.env.local scripts/migrate.ts --test",
     "emulators": "firebase emulators:start --only auth --project lunarsprints-62d7d",
     "dev:local": "firebase emulators:exec --only auth --ui --project lunarsprints-62d7d \"npm run dev\"",
-    "test:rls": "vitest run --config vitest.integration.config.ts tests/rls.test.ts"
+    "test:rls": "vitest run --config vitest.integration.config.ts tests/rls.test.ts",
+    "contracts:build": "tsx scripts/contracts-build.ts",
+    "contracts:check": "tsx scripts/contracts-build.ts --check"
   },
   "dependencies": {
     "@fontsource/geist-sans": "5.3.0",

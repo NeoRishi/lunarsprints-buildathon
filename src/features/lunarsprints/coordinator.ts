@@ -46,6 +46,7 @@ import {
   unique,
 } from "./domain";
 import type { Intelligence } from "./agents/intelligence";
+import { scheduleNotesSchema } from "./agents/contract";
 import { NeedsClarification } from "./agents/outcomes";
 import { clarificationBase, planningFacts } from "./planning";
 import {
@@ -660,7 +661,7 @@ export async function coordinate(
         try {
           const advice = await invoke(
             "scheduling",
-            z.object({ notes: z.array(z.string()).max(3) }),
+            scheduleNotesSchema,
             {
               validatedAllocations: s.allocations,
               capacity: capacity(s),

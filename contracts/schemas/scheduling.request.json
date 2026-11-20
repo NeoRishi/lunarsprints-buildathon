@@ -1,0 +1,176 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "scheduling request",
+  "description": "Generated from src/features/lunarsprints/agents/contract.ts by npm run contracts:build. Do not edit.",
+  "anyOf": [
+    {
+      "$ref": "#/$defs/schedule_notes"
+    }
+  ],
+  "$defs": {
+    "schedule_notes": {
+      "type": "object",
+      "properties": {
+        "requestId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "task": {
+          "type": "string",
+          "const": "schedule_notes"
+        },
+        "input": {
+          "type": "object",
+          "properties": {
+            "validatedAllocations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "taskId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 6000
+                  },
+                  "date": {
+                    "type": "string",
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                  },
+                  "minutes": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 60
+                  }
+                },
+                "required": [
+                  "taskId",
+                  "date",
+                  "minutes"
+                ]
+              }
+            },
+            "capacity": {
+              "type": "object",
+              "properties": {
+                "planned": {
+                  "type": "number"
+                },
+                "buffer": {
+                  "type": "number"
+                },
+                "usable": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "dayLoads": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  }
+                },
+                "overbooked": {
+                  "type": "number"
+                },
+                "unknown": {
+                  "type": "boolean"
+                },
+                "dailyOverload": {
+                  "type": "boolean"
+                },
+                "dailyBufferOverload": {
+                  "type": "boolean"
+                },
+                "byGoal": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "minutes": {
+                        "type": "number"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "title",
+                      "minutes"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "planned",
+                "buffer",
+                "usable",
+                "dayLoads",
+                "overbooked",
+                "unknown",
+                "dailyOverload",
+                "dailyBufferOverload",
+                "byGoal"
+              ]
+            },
+            "startDate": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            },
+            "endDate": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            },
+            "confirmedFacts": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "question": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  },
+                  "source": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "question",
+                  "value",
+                  "source",
+                  "status"
+                ]
+              }
+            }
+          },
+          "required": [
+            "validatedAllocations",
+            "capacity",
+            "startDate",
+            "endDate",
+            "confirmedFacts"
+          ]
+        }
+      },
+      "required": [
+        "requestId",
+        "task",
+        "input"
+      ]
+    }
+  }
+}
