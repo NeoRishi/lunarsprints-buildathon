@@ -1,6 +1,6 @@
 # LunarSprints Public-Release Hardening & Pre-Deployment Plan
 
-Status: **Prepared for Review (No Public Deployment Executed)**
+Status: **Outdated. Do not follow.** Written for the previous hosted database and sign-in provider, which Step 2A replaced with Firebase Authentication and PostgreSQL. It will be rewritten for Cloud Run and Cloud SQL in Step 2B. Kept as a record.
 
 This document defines the operational, privacy, security, and shared-project configuration requirements before exposing LunarSprints on a public domain alongside the existing `NeoRishi-LifeOS-Final` (`jhkoxgyxrihsuhpjqkxc`) Supabase project.
 

@@ -1,6 +1,6 @@
 # NeoRishi LifeOS integration
 
-> Status: Supabase LifeOS is still the live database and sign-in until Step 2 of the buildathon migration moves them to Firebase Auth and Cloud SQL. The target stack is in [`GEMINI.md`](../GEMINI.md).
+> **Not part of the buildathon build.** LifeOS shared login is not used in this repository. Since Step 2A, sign-in is Firebase Authentication and the data lives in PostgreSQL (see [`GEMINI.md`](../GEMINI.md)). This file is kept only as a record of the earlier integration on the original product.
 
 The current local LunarSprints application uses **NeoRishi-LifeOS-Final**, project `jhkoxgyxrihsuhpjqkxc`, in the existing Pro organization. The integration was authorized by the user on October 28, 2026. No application was published or promoted to production.
 

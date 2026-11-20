@@ -1,6 +1,6 @@
 # Historical development notes
 
-> Historical. Step 1 of the buildathon migration removed the AI provider, saved agents, voice transcription and hosting setup described below. AI actions now return a plain "being upgraded" message until the new agent service is connected. The current and target stack are in [`GEMINI.md`](../GEMINI.md).
+> Historical. Step 1 of the buildathon migration removed the AI provider, saved agents, voice transcription and hosting setup described below. AI actions now return a plain "being upgraded" message until the new agent service is connected. Step 2A then replaced the hosted database and sign-in described below with PostgreSQL and Firebase Authentication. The current and target stack are in [`GEMINI.md`](../GEMINI.md).
 
 These cumulative notes describe development history. Historical QA screenshots, raw synthetic model outputs and acceptance receipts remain in the preserved local P2 release; they are not published in this repository. The root README and website guide describe this GitHub delivery. The latest P2 baseline had 113 offline tests. Relative links below retain their original context.
 

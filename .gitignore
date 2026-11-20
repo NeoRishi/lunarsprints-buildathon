@@ -6,8 +6,6 @@ config/*.private.json
 test-results/
 playwright-report/
 coverage/
-supabase/.temp/
-supabase/.branches/
 next-env.d.ts
 *.tsbuildinfo
 
