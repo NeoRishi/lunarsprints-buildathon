@@ -26,7 +26,8 @@ export async function startSession(user: User) {
   const body = await response.json().catch(() => null);
   if (!response.ok) {
     const error = new Error(
-      body?.error?.message ?? "Sign-in could not be completed. Please try again.",
+      body?.error?.message ??
+        "Sign-in could not be completed. Please try again.",
     ) as Error & { code?: string };
     error.code = body?.error?.code;
     throw error;

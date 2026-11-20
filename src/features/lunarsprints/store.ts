@@ -83,9 +83,8 @@ export async function commit(
     if (error instanceof AppError && error.code !== "database_unavailable")
       throw error;
     const message = error instanceof Error ? error.message : "";
-    const conflict = /stale_revision|idempotency_conflict|invalid_revision/.test(
-      message,
-    );
+    const conflict =
+      /stale_revision|idempotency_conflict|invalid_revision/.test(message);
     throw new AppError(
       conflict ? "stale_revision" : "database_unavailable",
       conflict

@@ -115,7 +115,7 @@ export function AuthPanel({
       );
     });
 
-  const resend = () =>
+  const sendAgain = () =>
     run(async () => {
       const user = pending.current;
       if (!user) {
@@ -163,7 +163,7 @@ export function AuthPanel({
           <Button busy={busy} onClick={() => void confirmed()}>
             I have confirmed my email
           </Button>
-          <Button secondary busy={busy} onClick={() => void resend()}>
+          <Button secondary busy={busy} onClick={() => void sendAgain()}>
             Send the email again
           </Button>
         </div>
