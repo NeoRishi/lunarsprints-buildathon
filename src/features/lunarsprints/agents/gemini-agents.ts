@@ -206,15 +206,16 @@ export class GeminiAgentsIntelligence implements Intelligence {
 }
 
 export type EngineName = "gemini_agents" | "unavailable";
+type Env = Record<string, string | undefined>;
 
 /** Which engine the app uses: the agent service when its address is set. */
-export function activeEngine(env = process.env): EngineName {
+export function activeEngine(env: Env = process.env): EngineName {
   return env.AGENTS_SERVICE_URL ? "gemini_agents" : "unavailable";
 }
 
 export function selectIntelligence(
   context: AgentContext,
-  env = process.env,
+  env: Env = process.env,
 ): Intelligence {
   if (activeEngine(env) === "unavailable") return new UnavailableIntelligence();
   return new GeminiAgentsIntelligence(context, {
@@ -225,7 +226,7 @@ export function selectIntelligence(
 
 /** True when the agent service answers its liveness check within 2 seconds. */
 export async function agentServiceAnswers(
-  env = process.env,
+  env: Env = process.env,
   fetcher: typeof fetch = fetch,
 ): Promise<boolean | null> {
   if (!env.AGENTS_SERVICE_URL) return null;
