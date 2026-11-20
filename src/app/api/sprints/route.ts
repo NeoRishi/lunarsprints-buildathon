@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
-import { authenticated } from "@/lib/supabase/server";
+import { authenticated } from "@/lib/session";
 import { failure, jsonBody, sameOrigin } from "@/lib/http";
 import { commandSchema, type Sprint } from "@/features/lunarsprints/contracts";
 import { AppError, capacity, sprintDays } from "@/features/lunarsprints/domain";
@@ -16,7 +16,14 @@ import {
   newSprint,
 } from "@/features/lunarsprints/coordinator";
 import { UnavailableIntelligence } from "@/features/lunarsprints/agents/intelligence";
-import { commit, rateLimit, replay } from "@/features/lunarsprints/store";
+import {
+  activeSprints,
+  commit,
+  listSprints,
+  loadSprint,
+  rateLimit,
+  replay,
+} from "@/features/lunarsprints/store";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
@@ -27,23 +34,11 @@ const view = (s: Sprint) => ({
 });
 export async function GET(request: Request) {
   try {
-    const { client, user } = await authenticated();
+    const { user } = await authenticated();
     const url = new URL(request.url);
     const id = url.searchParams.get("id");
     if (id) {
-      const { data, error } = await client
-        .from("ls_sprints")
-        .select("state")
-        .eq("id", id)
-        .maybeSingle();
-      if (error)
-        throw new AppError(
-          "database_unavailable",
-          "Could not load your sprint.",
-          503,
-        );
-      const state = data?.state as
-        (Sprint & { archivedAt?: string }) | undefined;
+      const state = await loadSprint(user.id, id);
       if (!state || state.archivedAt)
         throw new AppError("not_found", "Sprint not found.", 404);
       if (url.searchParams.get("export") === "1") {
@@ -67,29 +62,7 @@ export async function GET(request: Request) {
     }
     // Filter archived rows in the query so they never use up list slots, and
     // read only summary fields instead of every full sprint snapshot.
-    const { data, error } = await client
-      .from("ls_sprints")
-      .select(
-        "id,revision,updated_at,stage:state->>stage,goalTitle:state->goals->0->>title,intention:state->>intention,startDate:state->>startDate,endDate:state->>endDate",
-      )
-      .is("state->>archivedAt", null)
-      .order("updated_at", { ascending: false })
-      .limit(50);
-    if (error)
-      throw new AppError(
-        "database_unavailable",
-        "Could not load your saved sprints.",
-        503,
-      );
-    const rows = data as unknown as {
-      id: string;
-      revision: number;
-      stage: Sprint["stage"];
-      goalTitle: string | null;
-      intention: string | null;
-      startDate: string;
-      endDate: string;
-    }[];
+    const rows = await listSprints(user.id);
     return NextResponse.json(
       {
         plan: planFor(user.id),
@@ -112,23 +85,13 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     sameOrigin(request);
-    const { client, user } = await authenticated();
+    const { user } = await authenticated();
     const command = commandSchema.parse(await jsonBody(request));
     const requestHash = hash(command);
     const prior = await replay(user.id, command.idempotencyKey, requestHash);
     if (prior) {
-      const { data, error } = await client
-        .from("ls_sprints")
-        .select("state")
-        .eq("id", command.sprintId)
-        .maybeSingle();
-      if (error)
-        throw new AppError(
-          "database_unavailable",
-          "Could not check this sprint.",
-          503,
-        );
-      if (!data || (data.state as { archivedAt?: string }).archivedAt)
+      const stored = await loadSprint(user.id, command.sprintId);
+      if (!stored || stored.archivedAt)
         throw new AppError("not_found", "Sprint not found.", 404);
       return NextResponse.json(view(prior), {
         headers: { "Cache-Control": "private, no-store" },
@@ -147,34 +110,11 @@ export async function POST(request: Request) {
         enforceStartWindow: true,
       });
     } else {
-      const { data, error } = await client
-        .from("ls_sprints")
-        .select("state")
-        .eq("id", command.sprintId)
-        .maybeSingle();
-      if (error)
-        throw new AppError(
-          "database_unavailable",
-          "Could not load this sprint.",
-          503,
-        );
-      const existing = data?.state as
-        (Sprint & { archivedAt?: string }) | undefined;
+      const existing = await loadSprint(user.id, command.sprintId);
       if (!existing || existing.archivedAt)
         throw new AppError("not_found", "Sprint not found.", 404);
       if (command.action === "activate") {
-        const { data: active, error: activeError } = await client
-          .from("ls_sprints")
-          .select(
-            "id,endDate:state->>endDate,timezone:state->>timezone,archivedAt:state->>archivedAt",
-          )
-          .eq("state->>stage", "active");
-        if (activeError)
-          throw new AppError(
-            "database_unavailable",
-            "Could not check your active sprints.",
-            503,
-          );
+        const active = await activeSprints(user.id);
         assertCanActivate(
           planFor(user.id),
           command.sprintId,
@@ -215,23 +155,11 @@ export async function POST(request: Request) {
 export async function DELETE(request: Request) {
   try {
     sameOrigin(request);
-    const { client, user } = await authenticated();
+    const { user } = await authenticated();
     await rateLimit(user.id, "commands", 90, 300);
     const id = new URL(request.url).searchParams.get("id");
     if (!id) throw new AppError("invalid_input", "Provide a sprint id.");
-    const { data, error } = await client
-      .from("ls_sprints")
-      .select("state")
-      .eq("id", id)
-      .maybeSingle();
-    if (error)
-      throw new AppError(
-        "database_unavailable",
-        "Could not load this sprint.",
-        503,
-      );
-    const existing = data?.state as
-      (Sprint & { archivedAt?: string }) | undefined;
+    const existing = await loadSprint(user.id, id);
     if (!existing || existing.archivedAt)
       throw new AppError("not_found", "Sprint not found.", 404);
     const at = new Date().toISOString();

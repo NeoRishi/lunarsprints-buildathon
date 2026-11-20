@@ -1,6 +1,6 @@
 ---
 name: silent-failure-hunter
-description: Read-only review of LunarSprints code for swallowed errors, misleading fallbacks and failures that pretend to succeed. Use when asked to review a diff or branch that touches API routes under src/app/api, the coordinator, the agents folder, store.ts or any Supabase call. Reports findings only and never edits code.
+description: Read-only review of LunarSprints code for swallowed errors, misleading fallbacks and failures that pretend to succeed. Use when asked to review a diff or branch that touches API routes under src/app/api, the coordinator, the agents folder, store.ts or any database call. Reports findings only and never edits code.
 ---
 
 # Silent failure hunter

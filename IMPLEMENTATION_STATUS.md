@@ -8,9 +8,19 @@
 - [x] Turned voice input off. The recording header check moved to `src/lib/audio.ts` with tests.
 - [x] Removed the previous hosting config. `next.config.ts` builds a standalone server for Cloud Run; production origin comes only from `APP_ORIGIN`.
 - [x] Replaced the old project guidance with `GEMINI.md` and skills in `.agents/skills/`.
-- [ ] Step 2 onward: Firebase Auth, Cloud SQL, the Python ADK agent service on Gemini, Gemini Live voice, BigQuery, Firebase Cloud Messaging. See `GEMINI.md`.
 
-Everything below is the earlier development record, kept for history. It describes the AI setup and hosting that Step 1 removed.
+## Buildathon Step 2A: local foundation (November 2026)
+
+- [x] Upgraded Next.js to 16.4.6.
+- [x] Ported the four migrations to `db/migrations/` for plain PostgreSQL. `ls_users` replaces the hosted auth user table; every policy reads `app.user_id`; RLS is enabled and forced on every `ls_` table; the append-only audit rules are unchanged.
+- [x] Added `db:setup` (roles `ls_owner` and `ls_app`, databases `lunarsprints_dev` and `lunarsprints_test`) and `db:migrate` (records each file, safe to rerun, stops on any error).
+- [x] Added `src/lib/db.ts` with `withUser`, and moved `store.ts` and the sprints route onto it. The app refuses to run user queries on a role that could skip RLS.
+- [x] Moved sign-in to Firebase Authentication: email and password with required email confirmation, email sign-in links, password reset on Firebase's hosted page, and sign-out that revokes every session. Sessions are five-day httpOnly cookies set by `/api/auth/session`.
+- [x] Removed the previous sign-in route, the reset-password page, the old provider config and the live-check scripts that depended on it.
+- [x] Added `tests/rls.test.ts` (real PostgreSQL as `ls_app`) and `tests/auth-emulator.test.ts` (Auth emulator), and both run in CI with PostgreSQL 16 and Java 21.
+- [ ] Step 2B onward: Cloud SQL, Cloud Run, Secret Manager, real sign-in emails, then the Python ADK agent service on Gemini, Gemini Live voice, BigQuery, Firebase Cloud Messaging. See `GEMINI.md`.
+
+Everything below is the earlier development record, kept for history. It describes the AI setup, hosting, database and sign-in provider that Steps 1 and 2A replaced.
 
 
 ## Completed and verified

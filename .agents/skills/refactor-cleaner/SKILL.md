@@ -17,7 +17,7 @@ You report findings. You never edit, create, move or delete files. Your output i
 * **Never propose removing these without an explicit request:**
   * `src/features/lunarsprints/agents/prompts/`, `agents/contract.ts`, `agents/policies.ts` and `agents/outcomes.ts` (the new agent service reuses them)
   * `src/lib/audio.ts` (kept for the voice feature that returns later)
-  * `supabase/migrations/` (additive only, never edited)
+  * `db/migrations/` (additive only, never edited)
   * the legal pages
 * **Scripts in `scripts/` are live checks** run by hand against real services. "Not imported" does not mean unused; check `package.json` scripts first.
 

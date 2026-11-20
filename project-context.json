@@ -6,17 +6,17 @@
     "gitIdentity": "NeoRishi <hrishikesh.wattamwar@gmail.com>"
   },
   "repo": {
-    "github": "NeoRishi/lunar-sprints",
-    "defaultBranch": "main",
-    "localPath": "~/Desktop/LunarSprints",
-    "mergeDeploysToProduction": true,
-    "buildathonCopy": "Branched from main at commit e69e8dc for the Google Startup Buildathon"
+    "github": "NeoRishi/lunarsprints-buildathon",
+    "defaultBranch": "master",
+    "localPath": "~/Downloads/LunarSprints-buildathon",
+    "originalRepo": "NeoRishi/lunar-sprints",
+    "buildathonCopy": "Branched from NeoRishi/lunar-sprints main at commit e69e8dc for the Google Startup Buildathon",
+    "mergeDeploysToProduction": false
   },
   "stack": {
     "framework": "Next.js App Router",
     "language": "TypeScript",
     "styling": "Plain CSS with Moonlit tokens in src/app/globals.css plus CSS modules (no Tailwind)",
-    "auth_db": "Supabase via @supabase/ssr",
     "tests": [
       "Vitest",
       "Playwright"
@@ -24,30 +24,54 @@
     "packageManager": "npm",
     "validation": "Zod",
     "node": ">=22 <25",
-    "build": "next.config.ts output standalone, for a Cloud Run container"
+    "build": "next.config.ts output standalone, for a Cloud Run container",
+    "auth": "Firebase Authentication (firebase in the browser, firebase-admin on the server); five-day httpOnly __session cookie from /api/auth/session",
+    "database": "PostgreSQL via pg (src/lib/db.ts, withUser sets app.user_id); migrations in db/migrations"
   },
   "infrastructure": {
-    "supabase": {
-      "project": "NeoRishi LifeOS",
-      "ref": "jhkoxgyxrihsuhpjqkxc",
-      "region": "Tokyo",
-      "shared": true,
-      "rule": "Do not create a new project. Additive migrations only. Touch only LunarSprints tables. Preserve RLS.",
-      "configName": "NeoRishi-LifeOS-Final",
+    "firebase": {
+      "project": "lunarsprints-62d7d",
+      "signInMethods": [
+        "email and password (email confirmation required)",
+        "email sign-in link"
+      ],
+      "later": [
+        "Google sign-in"
+      ],
+      "localEmulator": {
+        "auth": 9099,
+        "ui": 4000
+      },
+      "credentials": "Application Default Credentials only; never a downloaded service-account key"
+    },
+    "database": {
+      "current": "Local PostgreSQL 16 (lunarsprints_dev, lunarsprints_test)",
+      "target": "Cloud SQL for PostgreSQL in Step 2B",
+      "roles": {
+        "ls_owner": "owns the schema and runs migrations",
+        "ls_app": "used by the app; not owner, no superuser, no BYPASSRLS"
+      },
+      "rule": "Additive migrations only. RLS enabled and forced on every ls_ table.",
       "tablePrefix": "ls_"
     },
-    "email": "Resend",
+    "email": "Firebase Authentication sends confirmation, sign-in link and password reset emails",
     "dns": "Hostinger (neorishi.io)",
     "productionUrl": "https://sprints.neorishi.io",
-    "hosting": "Moving to Cloud Run in Step 2 (see GEMINI.md)"
+    "hosting": "Cloud Run in Step 2B. No Google Cloud billing or paid resources yet."
   },
   "envVarNames": [
-    "NEXT_PUBLIC_SUPABASE_URL",
-    "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
-    "SUPABASE_SECRET_KEY",
+    "NEXT_PUBLIC_FIREBASE_API_KEY",
+    "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN",
+    "NEXT_PUBLIC_FIREBASE_PROJECT_ID",
+    "NEXT_PUBLIC_FIREBASE_APP_ID",
+    "NEXT_PUBLIC_USE_AUTH_EMULATOR",
+    "FIREBASE_PROJECT_ID",
+    "FIREBASE_AUTH_EMULATOR_HOST",
+    "DATABASE_URL",
+    "DATABASE_URL_OWNER",
+    "DATABASE_URL_TEST",
     "APP_ORIGIN",
-    "DEPLOYMENT_VERSION",
-    "LUNARSPRINTS_DIAGNOSTICS"
+    "DEPLOYMENT_VERSION"
   ],
   "ai": {
     "current": {
@@ -100,8 +124,8 @@
     "recommendedPreset": "Paksha sprint: Pratipada to Purnima or Amavasya",
     "freeTier": "1 active sprint of 3 to 15 days (config/plans.json)",
     "payments": "On hold. LunarSprints+ Rs 299/month shown as coming soon.",
-    "login": "One universal NeoRishi login, open signup",
-    "reminders": "Email via Resend today; Firebase Cloud Messaging is the target",
+    "login": "Open signup with email and password or an email sign-in link. Google sign-in later. LifeOS shared login is not part of the buildathon build.",
+    "reminders": "Email only today; Firebase Cloud Messaging is the target",
     "visualDirection": "Moonlit: dark night ground, moonlight text, one soft gold accent, thin serif headlines, minimal",
     "plainLanguage": {
       "avoidOnScreen": [
@@ -123,7 +147,7 @@
     "Deterministic core works with no LLM call",
     "Never silently rebuild today's plan; plan revisions are immutable",
     "Reality before lunar context; no fake lunar data in production",
-    "Preserve RLS; no service-role shortcuts in user paths",
+    "Preserve RLS: enabled and forced on every ls_ table; app connects as ls_app through withUser; no owner or admin shortcuts in user paths",
     "Server-authoritative identity and dates",
     "Additive migrations only",
     "No secrets in code, chat, logs or commits",
@@ -161,6 +185,12 @@
   "migration": {
     "plan": "7 steps for the Google Startup Buildathon",
     "step1": "Done: clean slate, previous AI vendors, hosting config and voice transcription removed",
-    "supabase": "Still in use until Step 2"
+    "step2a": "Done: Firebase Authentication and local PostgreSQL with forced RLS, at no cost",
+    "step2b": "Next: Cloud SQL, Cloud Run, Secret Manager, real sign-in emails"
+  },
+  "tests": {
+    "unit": "npm test",
+    "rls": "npm run test:rls (needs DATABASE_URL_TEST; fails, never skips)",
+    "auth": "npm run test:auth (runs on the Auth emulator)"
   }
 }

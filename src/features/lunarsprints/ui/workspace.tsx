@@ -47,7 +47,8 @@ type PlanSummary = {
 export function Workspace() {
   const [auth, setAuth] = useState<{
     configured: boolean;
-    user: { id: string; email: string } | null;
+    user: { id: string; email: string | null } | null;
+    callbackUrl?: string;
   } | null>(null);
   const [view, setView] = useState<View | null>(null);
   const [saved, setSaved] = useState<Saved[]>([]);
@@ -99,15 +100,11 @@ export function Workspace() {
     let alive = true;
     void (async () => {
       try {
-        const r = await fetch("/api/auth");
+        const r = await fetch("/api/auth/session");
         const b = await r.json();
         if (!r.ok) throw new Error(b.message ?? b.error?.message);
         if (!alive) return;
         setAuth(b);
-        if (new URLSearchParams(location.search).has("auth_error"))
-          setError(
-            "Sign-in or recovery could not be completed. Try Google again, or open the newest email link in the browser where you requested it.",
-          );
         if (b.user) {
           await loadList();
           const id = new URLSearchParams(location.search).get("sprint");
@@ -263,11 +260,16 @@ export function Workspace() {
                   aria-label="Sign out"
                   className="icon-button"
                   onClick={async () => {
-                    const r = await fetch("/api/auth", {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ action: "logout" }),
+                    const r = await fetch("/api/auth/session", {
+                      method: "DELETE",
                     });
+                    const b = r.ok ? null : await r.json().catch(() => null);
+                    if (!r.ok)
+                      setError(
+                        b?.error?.message ??
+                          "Sign-out could not be completed. Please try again.",
+                      );
+                    // On failure the session cookie was kept, so stay signed in.
                     if (r.ok) {
                       setAuth({ ...auth, user: null });
                       setView(null);
@@ -389,8 +391,12 @@ export function Workspace() {
               </Notice>
             ) : !auth.user ? (
               <AuthPanel
+                callbackUrl={
+                  auth.callbackUrl ??
+                  new URL("/auth/callback", location.href).href
+                }
                 onAuthenticated={async () => {
-                  const r = await fetch("/api/auth");
+                  const r = await fetch("/api/auth/session");
                   const a = await r.json();
                   if (!r.ok)
                     throw new Error(
