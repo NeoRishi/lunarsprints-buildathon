@@ -1,6 +1,6 @@
-import { PGlite } from "@electric-sql/pglite";
+import type { PGlite } from "@electric-sql/pglite";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { readdir, readFile } from "node:fs/promises";
+import { asUser, migratedDatabase } from "./pglite";
 import { newSprint } from "../src/features/lunarsprints/coordinator";
 import {
   AppError,
@@ -177,27 +177,20 @@ describe("plan limits", () => {
 
 describe("variable duration migration", () => {
   const owner = "33333333-3333-4333-8333-333333333333";
-  const db = new PGlite();
+  let db: PGlite;
   beforeAll(async () => {
-    await db.exec(
-      `create schema auth; create role anon; create role authenticated; create role service_role bypassrls; create table auth.users(id uuid primary key); insert into auth.users values('${owner}'); create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$; grant usage on schema public,auth to authenticated,anon,service_role; grant execute on function auth.uid() to authenticated,anon,service_role;`,
-    );
-    for (const file of (await readdir("supabase/migrations"))
-      .filter((f) => f.endsWith(".sql"))
-      .sort())
-      await db.exec(await readFile("supabase/migrations/" + file, "utf8"));
+    db = await migratedDatabase([owner]);
   });
   afterAll(async () => {
     await db.close();
   });
   const create = (state: ReturnType<typeof make>) =>
-    db.transaction(async (tx) => {
-      await tx.exec("set local role service_role");
-      return tx.query(
+    asUser(db, owner, (tx) =>
+      tx.query(
         "select public.ls_commit($1,$2,-1,$3,'h','create',$4::jsonb,null)",
         [owner, state.id, crypto.randomUUID(), JSON.stringify(state)],
-      );
-    });
+      ),
+    );
   it("stores 3, 15 and 45 day sprints", async () => {
     for (const days of [3, 15, 45]) await create(make(days));
     const rows = await db.query<{ n: number }>(
