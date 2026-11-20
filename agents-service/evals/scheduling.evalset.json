@@ -1,0 +1,379 @@
+{
+  "eval_set_id": "lunarsprints-scheduling",
+  "name": "LunarSprints scheduling",
+  "description": "Live eval cases for the scheduling agent. All people and data are fictional. Rubric ids name deterministic checks in evals/run_evals.py.",
+  "eval_cases": [
+    {
+      "eval_id": "sc-3-day",
+      "conversation": [
+        {
+          "invocation_id": "sc-3-day-1",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "{\"validatedAllocations\": [{\"taskId\": \"s1\", \"date\": \"2026-12-01\", \"minutes\": 45}, {\"taskId\": \"s2\", \"date\": \"2026-12-02\", \"minutes\": 45}, {\"taskId\": \"s3\", \"date\": \"2026-12-03\", \"minutes\": 45}], \"capacity\": {\"planned\": 135, \"buffer\": 27, \"usable\": 153, \"dayLoads\": [45, 45, 45], \"overbooked\": 0, \"unknown\": false, \"dailyOverload\": false, \"dailyBufferOverload\": false, \"byGoal\": [{\"id\": \"g1\", \"title\": \"Fictional goal\", \"minutes\": 135}]}, \"startDate\": \"2026-12-01\", \"endDate\": \"2026-12-03\", \"confirmedFacts\": []}"
+              }
+            ]
+          },
+          "creation_timestamp": 0
+        }
+      ],
+      "session_input": {
+        "app_name": "lunarsprints",
+        "user_id": "eval",
+        "state": {
+          "role": "scheduling",
+          "task": "schedule_notes",
+          "summary": "3-day sprint, even load"
+        }
+      },
+      "rubrics": [
+        {
+          "rubric_id": "check:valid",
+          "rubric_content": {
+            "text_property": "The answer matches the contract schema (checked by the service)."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:plain_copy",
+          "rubric_content": {
+            "text_property": "Text the person reads uses plain words: no SMART, story, task, agent, long dashes or hype."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:notes_max:3",
+          "rubric_content": {
+            "text_property": "At most 3 notes, each a short sentence."
+          },
+          "type": "deterministic"
+        }
+      ],
+      "creation_timestamp": 0
+    },
+    {
+      "eval_id": "sc-unknown-time",
+      "conversation": [
+        {
+          "invocation_id": "sc-unknown-time-1",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "{\"validatedAllocations\": [{\"taskId\": \"s1\", \"date\": \"2026-12-01\", \"minutes\": 40}, {\"taskId\": \"s2\", \"date\": \"2026-12-02\", \"minutes\": 40}, {\"taskId\": \"s3\", \"date\": \"2026-12-03\", \"minutes\": 40}, {\"taskId\": \"s4\", \"date\": \"2026-12-04\", \"minutes\": 40}, {\"taskId\": \"s5\", \"date\": \"2026-12-05\", \"minutes\": 40}, {\"taskId\": \"s6\", \"date\": \"2026-12-06\", \"minutes\": 40}, {\"taskId\": \"s7\", \"date\": \"2026-12-07\", \"minutes\": 40}, {\"taskId\": \"s8\", \"date\": \"2026-12-08\", \"minutes\": 40}, {\"taskId\": \"s9\", \"date\": \"2026-12-09\", \"minutes\": 40}, {\"taskId\": \"s10\", \"date\": \"2026-12-10\", \"minutes\": 40}], \"capacity\": {\"planned\": 400, \"buffer\": 0, \"usable\": null, \"dayLoads\": [40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 0, 0, 0, 0], \"overbooked\": 0, \"unknown\": true, \"dailyOverload\": false, \"dailyBufferOverload\": false, \"byGoal\": [{\"id\": \"g1\", \"title\": \"Fictional goal\", \"minutes\": 400}]}, \"startDate\": \"2026-12-01\", \"endDate\": \"2026-12-14\", \"confirmedFacts\": []}"
+              }
+            ]
+          },
+          "creation_timestamp": 0
+        }
+      ],
+      "session_input": {
+        "app_name": "lunarsprints",
+        "user_id": "eval",
+        "state": {
+          "role": "scheduling",
+          "task": "schedule_notes",
+          "summary": "Time not confirmed"
+        }
+      },
+      "rubrics": [
+        {
+          "rubric_id": "check:valid",
+          "rubric_content": {
+            "text_property": "The answer matches the contract schema (checked by the service)."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:plain_copy",
+          "rubric_content": {
+            "text_property": "Text the person reads uses plain words: no SMART, story, task, agent, long dashes or hype."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:notes_max:3",
+          "rubric_content": {
+            "text_property": "At most 3 notes, each a short sentence."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:mentions:confirm|not confirmed|unknown|not set|haven't|have not",
+          "rubric_content": {
+            "text_property": "A note mentions: confirm|not confirmed|unknown|not set|haven't|have not."
+          },
+          "type": "deterministic"
+        }
+      ],
+      "creation_timestamp": 0
+    },
+    {
+      "eval_id": "sc-overbooked",
+      "conversation": [
+        {
+          "invocation_id": "sc-overbooked-1",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "{\"validatedAllocations\": [{\"taskId\": \"s0\", \"date\": \"2026-12-01\", \"minutes\": 60}, {\"taskId\": \"s1\", \"date\": \"2026-12-01\", \"minutes\": 60}, {\"taskId\": \"s2\", \"date\": \"2026-12-01\", \"minutes\": 60}, {\"taskId\": \"s3\", \"date\": \"2026-12-02\", \"minutes\": 60}, {\"taskId\": \"s4\", \"date\": \"2026-12-02\", \"minutes\": 60}, {\"taskId\": \"s5\", \"date\": \"2026-12-02\", \"minutes\": 60}, {\"taskId\": \"s6\", \"date\": \"2026-12-03\", \"minutes\": 60}, {\"taskId\": \"s7\", \"date\": \"2026-12-03\", \"minutes\": 60}, {\"taskId\": \"s8\", \"date\": \"2026-12-03\", \"minutes\": 60}], \"capacity\": {\"planned\": 540, \"buffer\": 23, \"usable\": 127, \"dayLoads\": [180, 180, 180], \"overbooked\": 413, \"unknown\": false, \"dailyOverload\": true, \"dailyBufferOverload\": true, \"byGoal\": [{\"id\": \"g1\", \"title\": \"Fictional goal\", \"minutes\": 540}]}, \"startDate\": \"2026-12-01\", \"endDate\": \"2026-12-03\", \"confirmedFacts\": []}"
+              }
+            ]
+          },
+          "creation_timestamp": 0
+        }
+      ],
+      "session_input": {
+        "app_name": "lunarsprints",
+        "user_id": "eval",
+        "state": {
+          "role": "scheduling",
+          "task": "schedule_notes",
+          "summary": "Overloaded capacity"
+        }
+      },
+      "rubrics": [
+        {
+          "rubric_id": "check:valid",
+          "rubric_content": {
+            "text_property": "The answer matches the contract schema (checked by the service)."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:plain_copy",
+          "rubric_content": {
+            "text_property": "Text the person reads uses plain words: no SMART, story, task, agent, long dashes or hype."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:notes_max:3",
+          "rubric_content": {
+            "text_property": "At most 3 notes, each a short sentence."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:mentions:over|more than|exceed|too much|beyond|tight|heavy",
+          "rubric_content": {
+            "text_property": "A note mentions: over|more than|exceed|too much|beyond|tight|heavy."
+          },
+          "type": "deterministic"
+        }
+      ],
+      "creation_timestamp": 0
+    },
+    {
+      "eval_id": "sc-bunched-end",
+      "conversation": [
+        {
+          "invocation_id": "sc-bunched-end-1",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "{\"validatedAllocations\": [{\"taskId\": \"s1\", \"date\": \"2026-12-12\", \"minutes\": 60}, {\"taskId\": \"s2\", \"date\": \"2026-12-13\", \"minutes\": 60}, {\"taskId\": \"s3\", \"date\": \"2026-12-14\", \"minutes\": 60}], \"capacity\": {\"planned\": 180, \"buffer\": 90, \"usable\": 510, \"dayLoads\": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 60, 60, 60], \"overbooked\": 0, \"unknown\": false, \"dailyOverload\": false, \"dailyBufferOverload\": true, \"byGoal\": [{\"id\": \"g1\", \"title\": \"Fictional goal\", \"minutes\": 180}]}, \"startDate\": \"2026-12-01\", \"endDate\": \"2026-12-14\", \"confirmedFacts\": []}"
+              }
+            ]
+          },
+          "creation_timestamp": 0
+        }
+      ],
+      "session_input": {
+        "app_name": "lunarsprints",
+        "user_id": "eval",
+        "state": {
+          "role": "scheduling",
+          "task": "schedule_notes",
+          "summary": "Work bunched at the end"
+        }
+      },
+      "rubrics": [
+        {
+          "rubric_id": "check:valid",
+          "rubric_content": {
+            "text_property": "The answer matches the contract schema (checked by the service)."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:plain_copy",
+          "rubric_content": {
+            "text_property": "Text the person reads uses plain words: no SMART, story, task, agent, long dashes or hype."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:notes_max:3",
+          "rubric_content": {
+            "text_property": "At most 3 notes, each a short sentence."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:mentions:end|last|final|12 December|13 December|14 December|late",
+          "rubric_content": {
+            "text_property": "A note mentions: end|last|final|12 December|13 December|14 December|late."
+          },
+          "type": "deterministic"
+        }
+      ],
+      "creation_timestamp": 0
+    },
+    {
+      "eval_id": "sc-45-day",
+      "conversation": [
+        {
+          "invocation_id": "sc-45-day-1",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "{\"validatedAllocations\": [{\"taskId\": \"s1\", \"date\": \"2026-12-01\", \"minutes\": 30}, {\"taskId\": \"s2\", \"date\": \"2026-12-02\", \"minutes\": 30}, {\"taskId\": \"s3\", \"date\": \"2026-12-03\", \"minutes\": 30}, {\"taskId\": \"s4\", \"date\": \"2026-12-04\", \"minutes\": 30}, {\"taskId\": \"s5\", \"date\": \"2026-12-05\", \"minutes\": 30}, {\"taskId\": \"s6\", \"date\": \"2026-12-06\", \"minutes\": 30}, {\"taskId\": \"s7\", \"date\": \"2026-12-07\", \"minutes\": 30}, {\"taskId\": \"s8\", \"date\": \"2026-12-08\", \"minutes\": 30}, {\"taskId\": \"s9\", \"date\": \"2026-12-09\", \"minutes\": 30}, {\"taskId\": \"s10\", \"date\": \"2026-12-10\", \"minutes\": 30}, {\"taskId\": \"s11\", \"date\": \"2026-12-11\", \"minutes\": 30}, {\"taskId\": \"s12\", \"date\": \"2026-12-12\", \"minutes\": 30}, {\"taskId\": \"s13\", \"date\": \"2026-12-13\", \"minutes\": 30}, {\"taskId\": \"s14\", \"date\": \"2026-12-14\", \"minutes\": 30}, {\"taskId\": \"s15\", \"date\": \"2026-12-15\", \"minutes\": 30}, {\"taskId\": \"s16\", \"date\": \"2026-12-16\", \"minutes\": 30}, {\"taskId\": \"s17\", \"date\": \"2026-12-17\", \"minutes\": 30}, {\"taskId\": \"s18\", \"date\": \"2026-12-18\", \"minutes\": 30}, {\"taskId\": \"s19\", \"date\": \"2026-12-19\", \"minutes\": 30}, {\"taskId\": \"s20\", \"date\": \"2026-12-20\", \"minutes\": 30}], \"capacity\": {\"planned\": 600, \"buffer\": 300, \"usable\": 1700, \"dayLoads\": [30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], \"overbooked\": 0, \"unknown\": false, \"dailyOverload\": false, \"dailyBufferOverload\": false, \"byGoal\": [{\"id\": \"g1\", \"title\": \"Fictional goal\", \"minutes\": 600}]}, \"startDate\": \"2026-12-01\", \"endDate\": \"2027-01-14\", \"confirmedFacts\": []}"
+              }
+            ]
+          },
+          "creation_timestamp": 0
+        }
+      ],
+      "session_input": {
+        "app_name": "lunarsprints",
+        "user_id": "eval",
+        "state": {
+          "role": "scheduling",
+          "task": "schedule_notes",
+          "summary": "45-day sprint, light load"
+        }
+      },
+      "rubrics": [
+        {
+          "rubric_id": "check:valid",
+          "rubric_content": {
+            "text_property": "The answer matches the contract schema (checked by the service)."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:plain_copy",
+          "rubric_content": {
+            "text_property": "Text the person reads uses plain words: no SMART, story, task, agent, long dashes or hype."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:notes_max:3",
+          "rubric_content": {
+            "text_property": "At most 3 notes, each a short sentence."
+          },
+          "type": "deterministic"
+        }
+      ],
+      "creation_timestamp": 0
+    },
+    {
+      "eval_id": "sc-paksha",
+      "conversation": [
+        {
+          "invocation_id": "sc-paksha-1",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "{\"validatedAllocations\": [{\"taskId\": \"s1\", \"date\": \"2026-12-10\", \"minutes\": 50}, {\"taskId\": \"s2\", \"date\": \"2026-12-11\", \"minutes\": 50}, {\"taskId\": \"s3\", \"date\": \"2026-12-12\", \"minutes\": 50}, {\"taskId\": \"s4\", \"date\": \"2026-12-13\", \"minutes\": 50}, {\"taskId\": \"s5\", \"date\": \"2026-12-14\", \"minutes\": 50}, {\"taskId\": \"s6\", \"date\": \"2026-12-15\", \"minutes\": 50}, {\"taskId\": \"s7\", \"date\": \"2026-12-16\", \"minutes\": 50}, {\"taskId\": \"s8\", \"date\": \"2026-12-17\", \"minutes\": 50}, {\"taskId\": \"s9\", \"date\": \"2026-12-18\", \"minutes\": 50}, {\"taskId\": \"s10\", \"date\": \"2026-12-19\", \"minutes\": 50}, {\"taskId\": \"s11\", \"date\": \"2026-12-20\", \"minutes\": 50}, {\"taskId\": \"s12\", \"date\": \"2026-12-21\", \"minutes\": 50}], \"capacity\": {\"planned\": 600, \"buffer\": 115, \"usable\": 650, \"dayLoads\": [50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 0, 0, 0], \"overbooked\": 0, \"unknown\": false, \"dailyOverload\": false, \"dailyBufferOverload\": false, \"byGoal\": [{\"id\": \"g1\", \"title\": \"Fictional goal\", \"minutes\": 600}]}, \"startDate\": \"2026-12-10\", \"endDate\": \"2026-12-24\", \"confirmedFacts\": []}"
+              }
+            ]
+          },
+          "creation_timestamp": 0
+        }
+      ],
+      "session_input": {
+        "app_name": "lunarsprints",
+        "user_id": "eval",
+        "state": {
+          "role": "scheduling",
+          "task": "schedule_notes",
+          "summary": "Paksha sprint (15 days)"
+        }
+      },
+      "rubrics": [
+        {
+          "rubric_id": "check:valid",
+          "rubric_content": {
+            "text_property": "The answer matches the contract schema (checked by the service)."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:plain_copy",
+          "rubric_content": {
+            "text_property": "Text the person reads uses plain words: no SMART, story, task, agent, long dashes or hype."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:notes_max:3",
+          "rubric_content": {
+            "text_property": "At most 3 notes, each a short sentence."
+          },
+          "type": "deterministic"
+        }
+      ],
+      "creation_timestamp": 0
+    },
+    {
+      "eval_id": "sc-hinglish",
+      "conversation": [
+        {
+          "invocation_id": "sc-hinglish-1",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "{\"validatedAllocations\": [{\"taskId\": \"s1\", \"date\": \"2026-12-10\", \"minutes\": 40}, {\"taskId\": \"s2\", \"date\": \"2026-12-11\", \"minutes\": 40}, {\"taskId\": \"s3\", \"date\": \"2026-12-12\", \"minutes\": 40}, {\"taskId\": \"s4\", \"date\": \"2026-12-13\", \"minutes\": 40}, {\"taskId\": \"s5\", \"date\": \"2026-12-14\", \"minutes\": 40}, {\"taskId\": \"s6\", \"date\": \"2026-12-15\", \"minutes\": 40}, {\"taskId\": \"s7\", \"date\": \"2026-12-16\", \"minutes\": 40}, {\"taskId\": \"s8\", \"date\": \"2026-12-17\", \"minutes\": 40}, {\"taskId\": \"s9\", \"date\": \"2026-12-18\", \"minutes\": 40}, {\"taskId\": \"s10\", \"date\": \"2026-12-19\", \"minutes\": 40}], \"capacity\": {\"planned\": 400, \"buffer\": 60, \"usable\": 540, \"dayLoads\": [40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 0, 0, 0, 0, 0], \"overbooked\": 0, \"unknown\": false, \"dailyOverload\": false, \"dailyBufferOverload\": false, \"byGoal\": [{\"id\": \"g1\", \"title\": \"Fictional goal\", \"minutes\": 400}]}, \"startDate\": \"2026-12-10\", \"endDate\": \"2026-12-24\", \"confirmedFacts\": [{\"id\": \"intention\", \"question\": \"Original intention\", \"value\": \"Roz office ke baad sirf 45 minute milte hain, weekend pe bhi same.\", \"source\": \"user_utterance\", \"status\": \"confirmed\"}]}"
+              }
+            ]
+          },
+          "creation_timestamp": 0
+        }
+      ],
+      "session_input": {
+        "app_name": "lunarsprints",
+        "user_id": "eval",
+        "state": {
+          "role": "scheduling",
+          "task": "schedule_notes",
+          "summary": "Hinglish facts"
+        }
+      },
+      "rubrics": [
+        {
+          "rubric_id": "check:valid",
+          "rubric_content": {
+            "text_property": "The answer matches the contract schema (checked by the service)."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:plain_copy",
+          "rubric_content": {
+            "text_property": "Text the person reads uses plain words: no SMART, story, task, agent, long dashes or hype."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:notes_max:3",
+          "rubric_content": {
+            "text_property": "At most 3 notes, each a short sentence."
+          },
+          "type": "deterministic"
+        }
+      ],
+      "creation_timestamp": 0
+    }
+  ],
+  "creation_timestamp": 0
+}

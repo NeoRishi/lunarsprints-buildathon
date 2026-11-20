@@ -17,10 +17,7 @@
     "framework": "Next.js App Router",
     "language": "TypeScript",
     "styling": "Plain CSS with Moonlit tokens in src/app/globals.css plus CSS modules (no Tailwind)",
-    "tests": [
-      "Vitest",
-      "Playwright"
-    ],
+    "tests": ["Vitest", "Playwright"],
     "packageManager": "npm",
     "validation": "Zod",
     "node": ">=22 <25",
@@ -35,9 +32,7 @@
         "email and password (email confirmation required)",
         "email sign-in link"
       ],
-      "later": [
-        "Google sign-in"
-      ],
+      "later": ["Google sign-in"],
       "localEmulator": {
         "auth": 9099,
         "ui": 4000
@@ -71,26 +66,42 @@
     "DATABASE_URL_OWNER",
     "DATABASE_URL_TEST",
     "APP_ORIGIN",
-    "DEPLOYMENT_VERSION"
+    "DEPLOYMENT_VERSION",
+    "GOOGLE_API_KEY",
+    "GOOGLE_GENAI_USE_VERTEXAI",
+    "GEMINI_MODEL_DEFAULT",
+    "GEMINI_MODEL_INTENT_ALIGNMENT",
+    "GEMINI_MODEL_SMART_GOAL",
+    "GEMINI_MODEL_STORY_DECOMPOSER",
+    "GEMINI_MODEL_SCHEDULING",
+    "AGENTS_SERVICE_URL",
+    "AGENTS_SERVICE_TOKEN",
+    "AGENTS_TIMEOUT_SECONDS"
   ],
   "ai": {
     "current": {
-      "status": "Not connected. AI actions return ai_not_connected (503): 'AI suggestions are being upgraded. Your saved plan is safe.'",
+      "status": "Step 3 Run 1: intent_alignment, smart_goal, story_decomposer and scheduling run on Gemini through the local ADK agent service. daily_execution, adaptive_backlog and reflection still return ai_not_connected (503) until Run 2.",
       "interface": "src/features/lunarsprints/agents/intelligence.ts (Intelligence, UnavailableIntelligence)",
-      "keptForAgentService": [
-        "src/features/lunarsprints/agents/contract.ts",
-        "src/features/lunarsprints/agents/policies.ts",
-        "src/features/lunarsprints/agents/outcomes.ts",
-        "src/features/lunarsprints/agents/prompts/"
-      ],
-      "promptReferenceNote": "prompts/*.md are short summaries, not full instructions",
-      "rolesInvoked": [
-        "smart_goal",
-        "intent_alignment",
-        "story_decomposer",
-        "scheduling",
-        "adaptive_backlog",
+      "engine": "src/features/lunarsprints/agents/gemini-agents.ts (GeminiAgentsIntelligence, selectIntelligence): used when AGENTS_SERVICE_URL is set",
+      "contract": "src/features/lunarsprints/agents/contract.ts, written to contracts/schemas/*.json by npm run contracts:build",
+      "agentService": {
+        "path": "agents-service/",
+        "stack": "Python 3.12+, uv, Google ADK, FastAPI, Pydantic",
+        "local": "127.0.0.1:8080",
+        "auth": "X-Service-Token (Cloud Run IAM in Step 2B)",
+        "sessions": "InMemorySessionService, one per call",
+        "timeoutSeconds": 45,
+        "retries": 0
+      },
+      "connectedRoles": {
+        "intent_alignment": ["assess"],
+        "smart_goal": ["clarify", "goals", "readiness"],
+        "story_decomposer": ["stories"],
+        "scheduling": ["schedule_notes"]
+      },
+      "rolesNotConnectedYet": [
         "daily_execution",
+        "adaptive_backlog",
         "reflection"
       ],
       "rolesNotInvoked": {
@@ -98,6 +109,8 @@
         "capacity": "never called",
         "rhythm": "disabled"
       },
+      "models": "From env only: GEMINI_MODEL_<ROLE>, then GEMINI_MODEL_DEFAULT",
+      "originalInstructions": "Git-ignored .private/agent-instructions/ on the owner's Mac. Never commit.",
       "voice": "Off until Gemini Live API. Recording header check kept in src/lib/audio.ts"
     },
     "target": {
@@ -134,12 +147,7 @@
         "agent names",
         "semantic replan"
       ],
-      "use": [
-        "Done means",
-        "milestones",
-        "steps",
-        "Adjust the plan"
-      ]
+      "use": ["Done means", "milestones", "steps", "Adjust the plan"]
     },
     "plusTier": "Coming soon: up to 3 active sprints of up to 45 days (config/plans.json)"
   },
@@ -186,7 +194,9 @@
     "plan": "7 steps for the Google Startup Buildathon",
     "step1": "Done: clean slate, previous AI vendors, hosting config and voice transcription removed",
     "step2a": "Done: Firebase Authentication and local PostgreSQL with forced RLS, at no cost",
-    "step2b": "Next: Cloud SQL, Cloud Run, Secret Manager, real sign-in emails"
+    "step2b": "Not started: Cloud SQL, Cloud Run, Secret Manager, real sign-in emails",
+    "step3run1": "Done on branch feat/step3a-adk-planning-agents: ADK agent service with intent_alignment, smart_goal, story_decomposer and scheduling on Gemini",
+    "step3run2": "Next: daily_execution, adaptive_backlog, reflection"
   },
   "tests": {
     "unit": "npm test",

@@ -22,8 +22,7 @@ export default function Privacy() {
       <h2>What we collect</h2>
       <ul>
         <li>
-          <strong>Account details:</strong> your email address. Your NeoRishi
-          account is shared across NeoRishi products.
+          <strong>Account details:</strong> your email address.
         </li>
         <li>
           <strong>What you write in your sprints:</strong> your intentions,
@@ -76,6 +75,11 @@ export default function Privacy() {
             <tr>
               <td>Google Cloud: Firebase Authentication</td>
               <td>Sign-in and account emails</td>
+              <td>Google&apos;s global network</td>
+            </tr>
+            <tr>
+              <td>Google Cloud: Gemini</td>
+              <td>AI suggestions for goals, steps and schedules</td>
               <td>Google&apos;s global network</td>
             </tr>
             <tr>

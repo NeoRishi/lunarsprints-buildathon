@@ -137,6 +137,9 @@ class AgentRunner:
         started = time.monotonic()
         meta: types.GenerateContentResponseUsageMetadata | None = None
         outcome = "ok"
+        # Provider HTTP status and error class only, never the error message.
+        provider_status: int | None = None
+        error_type: str | None = None
         try:
             try:
                 text, meta = await asyncio.wait_for(
@@ -148,6 +151,9 @@ class AgentRunner:
                 # ADK checks the answer's shape while saving it.
                 raise invalid_output() from error
             except (genai_errors.APIError, httpx.HTTPError, ConnectionError) as error:
+                error_type = type(error).__name__
+                if isinstance(error, genai_errors.APIError):
+                    provider_status = error.code
                 raise AgentError("ai_unavailable", 503) from error
             if not text.strip():
                 raise invalid_output()
@@ -163,7 +169,7 @@ class AgentRunner:
             raise
         except Exception as error:
             outcome = "ai_unavailable"
-            log.error("agent call failed", extra={"error_type": type(error).__name__})
+            error_type = type(error).__name__
             raise AgentError("ai_unavailable", 503) from error
         finally:
             usage = self._usage(model, meta, started)
@@ -178,6 +184,8 @@ class AgentRunner:
                     "output_tokens": usage.output_tokens,
                     "outcome": outcome,
                     "request_id": request_id,
+                    "provider_status": provider_status,
+                    "error_type": error_type,
                 },
             )
 

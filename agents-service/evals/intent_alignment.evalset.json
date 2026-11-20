@@ -1,0 +1,435 @@
+{
+  "eval_set_id": "lunarsprints-intent_alignment",
+  "name": "LunarSprints intent_alignment",
+  "description": "Live eval cases for the intent_alignment agent. All people and data are fictional. Rubric ids name deterministic checks in evals/run_evals.py.",
+  "eval_cases": [
+    {
+      "eval_id": "ia-vague",
+      "conversation": [
+        {
+          "invocation_id": "ia-vague-1",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "{\"intention\": \"I want to get my life together this month.\", \"startDate\": \"2026-12-01\", \"endDate\": \"2026-12-14\", \"confirmedFacts\": [{\"id\": \"intention\", \"question\": \"Original intention\", \"value\": \"I want to get my life together this month.\", \"source\": \"user_utterance\", \"status\": \"confirmed\"}]}"
+              }
+            ]
+          },
+          "creation_timestamp": 0
+        }
+      ],
+      "session_input": {
+        "app_name": "lunarsprints",
+        "user_id": "eval",
+        "state": {
+          "role": "intent_alignment",
+          "task": "assess",
+          "summary": "Vague intention"
+        }
+      },
+      "rubrics": [
+        {
+          "rubric_id": "check:valid",
+          "rubric_content": {
+            "text_property": "The answer matches the contract schema (checked by the service)."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:plain_copy",
+          "rubric_content": {
+            "text_property": "Text the person reads uses plain words: no SMART, story, task, agent, long dashes or hype."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:status:ok",
+          "rubric_content": {
+            "text_property": "The answer status is ok."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:intents_min:1",
+          "rubric_content": {
+            "text_property": "At least 1 distinct intentions are found."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:has_uncertainties",
+          "rubric_content": {
+            "text_property": "Unclear or missing details are listed as uncertainties."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:baseline_null",
+          "rubric_content": {
+            "text_property": "No baseline is invented when the person stated none."
+          },
+          "type": "deterministic"
+        }
+      ],
+      "creation_timestamp": 0
+    },
+    {
+      "eval_id": "ia-impossible-deadline",
+      "conversation": [
+        {
+          "invocation_id": "ia-impossible-deadline-1",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "{\"intention\": \"Write and publish a 300 page novel in the next 3 days. I have not started writing.\", \"startDate\": \"2026-12-01\", \"endDate\": \"2026-12-03\", \"confirmedFacts\": [{\"id\": \"intention\", \"question\": \"Original intention\", \"value\": \"Write and publish a 300 page novel in the next 3 days. I have not started writing.\", \"source\": \"user_utterance\", \"status\": \"confirmed\"}]}"
+              }
+            ]
+          },
+          "creation_timestamp": 0
+        }
+      ],
+      "session_input": {
+        "app_name": "lunarsprints",
+        "user_id": "eval",
+        "state": {
+          "role": "intent_alignment",
+          "task": "assess",
+          "summary": "Impossible deadline"
+        }
+      },
+      "rubrics": [
+        {
+          "rubric_id": "check:valid",
+          "rubric_content": {
+            "text_property": "The answer matches the contract schema (checked by the service)."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:plain_copy",
+          "rubric_content": {
+            "text_property": "Text the person reads uses plain words: no SMART, story, task, agent, long dashes or hype."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:status:ok",
+          "rubric_content": {
+            "text_property": "The answer status is ok."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:intents_min:1",
+          "rubric_content": {
+            "text_property": "At least 1 distinct intentions are found."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:flags_tension",
+          "rubric_content": {
+            "text_property": "Conflicts, uncertainties or warnings flag that the plan is unrealistic."
+          },
+          "type": "deterministic"
+        }
+      ],
+      "creation_timestamp": 0
+    },
+    {
+      "eval_id": "ia-three-intents-45-days",
+      "conversation": [
+        {
+          "invocation_id": "ia-three-intents-45-days-1",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "{\"intention\": \"Over the next six weeks I want to launch my Etsy shop for handmade soy candles, prepare for my CA Inter exam on 10 January, and start running three times a week.\", \"startDate\": \"2026-12-01\", \"endDate\": \"2027-01-14\", \"confirmedFacts\": [{\"id\": \"intention\", \"question\": \"Original intention\", \"value\": \"Over the next six weeks I want to launch my Etsy shop for handmade soy candles, prepare for my CA Inter exam on 10 January, and start running three times a week.\", \"source\": \"user_utterance\", \"status\": \"confirmed\"}]}"
+              }
+            ]
+          },
+          "creation_timestamp": 0
+        }
+      ],
+      "session_input": {
+        "app_name": "lunarsprints",
+        "user_id": "eval",
+        "state": {
+          "role": "intent_alignment",
+          "task": "assess",
+          "summary": "Several intentions over a 45-day sprint"
+        }
+      },
+      "rubrics": [
+        {
+          "rubric_id": "check:valid",
+          "rubric_content": {
+            "text_property": "The answer matches the contract schema (checked by the service)."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:plain_copy",
+          "rubric_content": {
+            "text_property": "Text the person reads uses plain words: no SMART, story, task, agent, long dashes or hype."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:status:ok",
+          "rubric_content": {
+            "text_property": "The answer status is ok."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:intents_min:2",
+          "rubric_content": {
+            "text_property": "At least 2 distinct intentions are found."
+          },
+          "type": "deterministic"
+        }
+      ],
+      "creation_timestamp": 0
+    },
+    {
+      "eval_id": "ia-hinglish",
+      "conversation": [
+        {
+          "invocation_id": "ia-hinglish-1",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "{\"intention\": \"Mujhe apna cooking YouTube channel start karna hai, har week ek video daalna hai. Office ke baad sirf 1 ghanta milta hai.\", \"startDate\": \"2026-12-10\", \"endDate\": \"2026-12-24\", \"confirmedFacts\": [{\"id\": \"intention\", \"question\": \"Original intention\", \"value\": \"Mujhe apna cooking YouTube channel start karna hai, har week ek video daalna hai. Office ke baad sirf 1 ghanta milta hai.\", \"source\": \"user_utterance\", \"status\": \"confirmed\"}]}"
+              }
+            ]
+          },
+          "creation_timestamp": 0
+        }
+      ],
+      "session_input": {
+        "app_name": "lunarsprints",
+        "user_id": "eval",
+        "state": {
+          "role": "intent_alignment",
+          "task": "assess",
+          "summary": "Hinglish input"
+        }
+      },
+      "rubrics": [
+        {
+          "rubric_id": "check:valid",
+          "rubric_content": {
+            "text_property": "The answer matches the contract schema (checked by the service)."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:plain_copy",
+          "rubric_content": {
+            "text_property": "Text the person reads uses plain words: no SMART, story, task, agent, long dashes or hype."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:status:ok",
+          "rubric_content": {
+            "text_property": "The answer status is ok."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:intents_min:1",
+          "rubric_content": {
+            "text_property": "At least 1 distinct intentions are found."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:has_constraints",
+          "rubric_content": {
+            "text_property": "Stated limits (time, money, people) are captured as constraints."
+          },
+          "type": "deterministic"
+        }
+      ],
+      "creation_timestamp": 0
+    },
+    {
+      "eval_id": "ia-paksha-baseline",
+      "conversation": [
+        {
+          "invocation_id": "ia-paksha-baseline-1",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "{\"intention\": \"During this paksha I want to finish the literature review chapter of my research paper. I have already collected and read 20 sources.\", \"startDate\": \"2026-12-10\", \"endDate\": \"2026-12-24\", \"confirmedFacts\": [{\"id\": \"intention\", \"question\": \"Original intention\", \"value\": \"During this paksha I want to finish the literature review chapter of my research paper. I have already collected and read 20 sources.\", \"source\": \"user_utterance\", \"status\": \"confirmed\"}]}"
+              }
+            ]
+          },
+          "creation_timestamp": 0
+        }
+      ],
+      "session_input": {
+        "app_name": "lunarsprints",
+        "user_id": "eval",
+        "state": {
+          "role": "intent_alignment",
+          "task": "assess",
+          "summary": "Paksha sprint with stated progress"
+        }
+      },
+      "rubrics": [
+        {
+          "rubric_id": "check:valid",
+          "rubric_content": {
+            "text_property": "The answer matches the contract schema (checked by the service)."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:plain_copy",
+          "rubric_content": {
+            "text_property": "Text the person reads uses plain words: no SMART, story, task, agent, long dashes or hype."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:status:ok",
+          "rubric_content": {
+            "text_property": "The answer status is ok."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:baseline_set",
+          "rubric_content": {
+            "text_property": "The work already done is captured as the baseline."
+          },
+          "type": "deterministic"
+        }
+      ],
+      "creation_timestamp": 0
+    },
+    {
+      "eval_id": "ia-overloaded",
+      "conversation": [
+        {
+          "invocation_id": "ia-overloaded-1",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "{\"intention\": \"In 3 days I need to finish 4 client logo designs, file my GST return and pack up my flat to move. I only get 1 hour a day.\", \"startDate\": \"2026-12-01\", \"endDate\": \"2026-12-03\", \"confirmedFacts\": [{\"id\": \"intention\", \"question\": \"Original intention\", \"value\": \"In 3 days I need to finish 4 client logo designs, file my GST return and pack up my flat to move. I only get 1 hour a day.\", \"source\": \"user_utterance\", \"status\": \"confirmed\"}]}"
+              }
+            ]
+          },
+          "creation_timestamp": 0
+        }
+      ],
+      "session_input": {
+        "app_name": "lunarsprints",
+        "user_id": "eval",
+        "state": {
+          "role": "intent_alignment",
+          "task": "assess",
+          "summary": "Overloaded capacity in a 3-day sprint"
+        }
+      },
+      "rubrics": [
+        {
+          "rubric_id": "check:valid",
+          "rubric_content": {
+            "text_property": "The answer matches the contract schema (checked by the service)."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:plain_copy",
+          "rubric_content": {
+            "text_property": "Text the person reads uses plain words: no SMART, story, task, agent, long dashes or hype."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:status:ok",
+          "rubric_content": {
+            "text_property": "The answer status is ok."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:intents_min:2",
+          "rubric_content": {
+            "text_property": "At least 2 distinct intentions are found."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:flags_tension",
+          "rubric_content": {
+            "text_property": "Conflicts, uncertainties or warnings flag that the plan is unrealistic."
+          },
+          "type": "deterministic"
+        }
+      ],
+      "creation_timestamp": 0
+    },
+    {
+      "eval_id": "ia-clarify",
+      "conversation": [
+        {
+          "invocation_id": "ia-clarify-1",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "{\"intention\": \"help\", \"startDate\": \"2026-12-01\", \"endDate\": \"2026-12-14\", \"confirmedFacts\": [{\"id\": \"intention\", \"question\": \"Original intention\", \"value\": \"help\", \"source\": \"user_utterance\", \"status\": \"confirmed\"}]}"
+              }
+            ]
+          },
+          "creation_timestamp": 0
+        }
+      ],
+      "session_input": {
+        "app_name": "lunarsprints",
+        "user_id": "eval",
+        "state": {
+          "role": "intent_alignment",
+          "task": "assess",
+          "summary": "Nothing to work with: should ask"
+        }
+      },
+      "rubrics": [
+        {
+          "rubric_id": "check:valid",
+          "rubric_content": {
+            "text_property": "The answer matches the contract schema (checked by the service)."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:plain_copy",
+          "rubric_content": {
+            "text_property": "Text the person reads uses plain words: no SMART, story, task, agent, long dashes or hype."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:asks_clarification",
+          "rubric_content": {
+            "text_property": "The agent asks the person a question instead of guessing."
+          },
+          "type": "deterministic"
+        }
+      ],
+      "creation_timestamp": 0
+    }
+  ],
+  "creation_timestamp": 0
+}

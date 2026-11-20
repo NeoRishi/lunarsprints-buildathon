@@ -20,6 +20,7 @@ _FIELDS = (
     "outcome",
     "request_id",
     "error_type",
+    "provider_status",
 )
 
 

@@ -18,7 +18,20 @@
 - [x] Moved sign-in to Firebase Authentication: email and password with required email confirmation, email sign-in links, password reset on Firebase's hosted page, and sign-out that revokes every session. Sessions are five-day httpOnly cookies set by `/api/auth/session`.
 - [x] Removed the previous sign-in route, the reset-password page, the old provider config and the live-check scripts that depended on it.
 - [x] Added `tests/rls.test.ts` (real PostgreSQL as `ls_app`) and `tests/auth-emulator.test.ts` (Auth emulator), and both run in CI with PostgreSQL 16 and Java 21.
-- [ ] Step 2B onward: Cloud SQL, Cloud Run, Secret Manager, real sign-in emails, then the Python ADK agent service on Gemini, Gemini Live voice, BigQuery, Firebase Cloud Messaging. See `GEMINI.md`.
+- [ ] Step 2B: Cloud SQL, Cloud Run, Secret Manager, real sign-in emails. See `GEMINI.md`.
+
+## Buildathon Step 3, Run 1: ADK planning agents (November 2026)
+
+- [x] Fetched the original instructions of the 7 active saved agents into the git-ignored `.private/agent-instructions/` with a throwaway script. All 7 matched their registered SHA-256 hashes. Nothing from `.private/` is committed and no OpenAI package was added.
+- [x] Added `agents-service/`: a Python (uv, Google ADK, FastAPI, Pydantic) service with one `LlmAgent` per role task, each using `output_schema`. Models come only from env.
+- [x] Connected intent_alignment (assess), smart_goal (clarify, goals, readiness), story_decomposer (stories) and scheduling (schedule_notes). intent_alignment came forward from Run 2 because every planning flow starts with it.
+- [x] One contract for both languages: zod in `agents/contract.ts`, JSON Schema files in `contracts/schemas/` (`npm run contracts:build`), Pydantic models built from those files. A test fails when the files are stale.
+- [x] `GeminiAgentsIntelligence` checks every answer with the zod contract before returning it. Plain messages for timeouts, outages and invalid answers; the saved plan never changes on failure; no automatic retries.
+- [x] Service token on every call (constant-time compare), 45 s timeout, metadata-only logs, vendor logs silenced, no account identity sent.
+- [x] `recordRuns` now records every AI call (role, task, model, latency, tokens, outcome). Removed the OpenAI-era metrics shape and helpers.
+- [x] Tests: 49 Python unit tests (model faked), TypeScript tests for the new engine, live ADK eval sets (`npm run eval:agents`) and a live end-to-end check (`npm run test:ai-planning`). CI runs ruff, mypy, pytest and the schema drift check, with no key.
+- [x] `npm run dev:all`, `.env.example`, privacy page (Gemini added, shared NeoRishi account sentence removed), `GEMINI.md`, README and `docs/architecture/agents.md`.
+- [ ] Step 3, Run 2: daily_execution, adaptive_backlog, reflection.
 
 Everything below is the earlier development record, kept for history. It describes the AI setup, hosting, database and sign-in provider that Steps 1 and 2A replaced.
 
