@@ -62,16 +62,14 @@ export function failure(error: unknown) {
 export function requestOrigin(request: Request) {
   if (process.env.APP_ORIGIN) return process.env.APP_ORIGIN;
   // Never trust the Host header in production: it builds sign-in and reset
-  // links and anchors the cross-site write check. Vercel previews fall back to
-  // their own deployment URL; anything else must set APP_ORIGIN.
-  if (process.env.NODE_ENV === "production") {
-    if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+  // links and anchors the cross-site write check. Every deployment must set
+  // APP_ORIGIN.
+  if (process.env.NODE_ENV === "production")
     throw new AppError(
       "configuration_error",
       "This deployment is missing its public address. Please try again later.",
       503,
     );
-  }
   // Local development: Next may normalize request.url to localhost, so the
   // Host header is the browser's actual target.
   const url = new URL(request.url);

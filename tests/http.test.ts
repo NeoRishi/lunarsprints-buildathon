@@ -68,15 +68,10 @@ describe("HTTP boundaries", () => {
   it("never trusts the Host header in production", () => {
     vi.stubEnv("NODE_ENV", "production");
     vi.stubEnv("APP_ORIGIN", "");
-    vi.stubEnv("VERCEL_URL", "");
     const request = new Request("http://internal/api/auth", {
       headers: { host: "attacker.example" },
     });
     expect(() => requestOrigin(request)).toThrow("public address");
-    vi.stubEnv("VERCEL_URL", "lunar-sprints-git-x.vercel.app");
-    expect(requestOrigin(request)).toBe(
-      "https://lunar-sprints-git-x.vercel.app",
-    );
     vi.stubEnv("APP_ORIGIN", "https://sprints.neorishi.io");
     expect(requestOrigin(request)).toBe("https://sprints.neorishi.io");
   });
