@@ -4,7 +4,6 @@ import { SESSION_COOKIE, sessionRequestSchema } from "@/lib/auth";
 import { AppError } from "@/features/lunarsprints/domain";
 import {
   createSession,
-  revokeSession,
   sessionConfigured,
   sessionCookieOptions,
   userFromSessionCookie,
@@ -68,21 +67,17 @@ export async function POST(request: Request) {
   }
 }
 
-/** Signs out: clears the cookie here and revokes the account's sessions. */
+/**
+ * Signs out on this device only: clears this browser's session cookie.
+ * Sessions on other devices keep working until they expire or sign out.
+ */
 export async function DELETE(request: Request) {
   try {
     sameOrigin(request);
   } catch (error) {
     return failure(error);
   }
-  let response: NextResponse;
-  try {
-    await revokeSession(readCookie(request));
-    response = NextResponse.json({ ok: true }, { headers: noStore });
-  } catch (error) {
-    response = failure(error);
-  }
-  // Always clear this browser's cookie, even if revocation failed.
+  const response = NextResponse.json({ ok: true }, { headers: noStore });
   response.cookies.set(SESSION_COOKIE, "", {
     ...sessionCookieOptions(),
     maxAge: 0,

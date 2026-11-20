@@ -3,13 +3,11 @@
  * database. Run with: npm run test:auth (it starts the emulator for you).
  */
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { deleteApp, initializeApp } from "firebase/app";
+import { deleteApp, FirebaseError, initializeApp } from "firebase/app";
 import {
   connectAuthEmulator,
-  createUserWithEmailAndPassword,
   getAuth,
   isSignInWithEmailLink,
-  sendEmailVerification,
   sendSignInLinkToEmail,
   signInWithEmailAndPassword,
   signInWithEmailLink,
@@ -34,6 +32,9 @@ process.env.APP_ORIGIN = ORIGIN;
 const route = await import("../src/app/api/auth/session/route");
 const { userFromSessionCookie } = await import("../src/lib/session");
 const { closePool } = await import("../src/lib/db");
+const { signUpNeutral } = await import("../src/lib/firebase/flows");
+const { authErrorMessage, NEUTRAL_SIGN_UP_MESSAGE } =
+  await import("../src/lib/auth");
 
 const app = initializeApp(
   { apiKey: "emulator-test-key", projectId: PROJECT },
@@ -54,13 +55,16 @@ afterAll(async () => {
 });
 
 type OobCode = { email: string; requestType: string; oobLink: string };
-async function latestLink(email: string, requestType: string) {
+async function emailsTo(email: string) {
   const response = await fetch(
     `http://${EMULATOR}/emulator/v1/projects/${PROJECT}/oobCodes`,
   );
   const { oobCodes } = (await response.json()) as { oobCodes: OobCode[] };
-  const match = oobCodes
-    .filter((c) => c.email === email && c.requestType === requestType)
+  return oobCodes.filter((c) => c.email === email);
+}
+async function latestLink(email: string, requestType: string) {
+  const match = (await emailsTo(email))
+    .filter((c) => c.requestType === requestType)
     .at(-1);
   if (!match) throw new Error(`No ${requestType} email for ${email}`);
   return match.oobLink;
@@ -80,20 +84,54 @@ function cookieFrom(response: Response) {
   const match = /__session=([^;]*)/.exec(header);
   return { value: match ? decodeURIComponent(match[1]) : "", header };
 }
-const pause = (ms: number) => new Promise((r) => setTimeout(r, ms));
+async function signInError(address: string, secret: string) {
+  try {
+    await signInWithEmailAndPassword(auth, address, secret);
+  } catch (error) {
+    if (error instanceof FirebaseError) return authErrorMessage(error.code);
+    throw error;
+  }
+  throw new Error("Sign-in unexpectedly worked");
+}
 
 describe("Firebase sign-in with server session cookies", () => {
   const email = `pw-${run}@example.com`;
   let cookie = "";
+  let otherDeviceCookie = "";
   let internalId = "";
 
-  it("blocks a new password account until its email is confirmed", async () => {
-    const { user } = await createUserWithEmailAndPassword(
+  it("sign-up shows the same message whether or not the email has an account", async () => {
+    const first = await signUpNeutral(auth, email, password, `${ORIGIN}/app`);
+    expect(auth.currentUser).toBeNull();
+    const again = await signUpNeutral(
       auth,
       email,
-      password,
+      "Different-Pass-7!",
+      `${ORIGIN}/app`,
     );
-    await sendEmailVerification(user);
+    expect(auth.currentUser).toBeNull();
+    expect(first).toBe(NEUTRAL_SIGN_UP_MESSAGE);
+    expect(again).toBe(first);
+    expect(NEUTRAL_SIGN_UP_MESSAGE).toBe(
+      "If this email can be used, we've sent you the next step.",
+    );
+    // A new account gets a confirmation email; an existing one gets a
+    // password-reset email instead, never an "already registered" error.
+    const types = (await emailsTo(email)).map((c) => c.requestType);
+    expect(types).toContain("VERIFY_EMAIL");
+    expect(types).toContain("PASSWORD_RESET");
+  });
+
+  it("sign-in failure reads the same for an unknown email and a wrong password", async () => {
+    const unknown = await signInError(`nobody-${run}@example.com`, password);
+    const wrong = await signInError(email, "Wrong-Password-1!");
+    expect(unknown).toBe(wrong);
+    expect(unknown).toContain("Check your email and password");
+  });
+
+  it("blocks a new password account until its email is confirmed", async () => {
+    const { user } = await signInWithEmailAndPassword(auth, email, password);
+    expect(user.emailVerified).toBe(false);
     const response = await sessionPost(await user.getIdToken());
     expect(response.status).toBe(403);
     expect((await response.json()).error.code).toBe("email_not_verified");
@@ -103,7 +141,9 @@ describe("Firebase sign-in with server session cookies", () => {
 
   it("signs in with email and password once the email is confirmed", async () => {
     const link = await latestLink(email, "VERIFY_EMAIL");
-    expect((await fetch(link)).ok).toBe(true);
+    // The emulator confirms the email, then redirects to the app (not running here).
+    const opened = await fetch(link, { redirect: "manual" });
+    expect(opened.status).toBeLessThan(400);
     const { user } = await signInWithEmailAndPassword(auth, email, password);
     expect(user.emailVerified).toBe(true);
     const response = await sessionPost(await user.getIdToken());
@@ -141,14 +181,13 @@ describe("Firebase sign-in with server session cookies", () => {
 
   it("signing in again keeps the same internal user", async () => {
     const { user } = await signInWithEmailAndPassword(auth, email, password);
-    const body = await (await sessionPost(await user.getIdToken())).json();
-    expect(body.user.id).toBe(internalId);
+    const response = await sessionPost(await user.getIdToken());
+    expect((await response.json()).user.id).toBe(internalId);
+    otherDeviceCookie = cookieFrom(response).value;
     await signOut(auth);
   });
 
-  it("sign-out clears the cookie and revokes the session everywhere", async () => {
-    // Revocation is recorded in whole seconds after the sign-in time.
-    await pause(1100);
+  it("sign-out clears this device's cookie and leaves other devices signed in", async () => {
     const response = await route.DELETE(
       new Request(`${ORIGIN}/api/auth/session`, {
         method: "DELETE",
@@ -162,7 +201,11 @@ describe("Firebase sign-in with server session cookies", () => {
     expect(response.headers.get("set-cookie")).toMatch(
       /__session=;.*Max-Age=0/i,
     );
-    await expect(userFromSessionCookie(cookie)).rejects.toThrow("Sign in");
+    // No refresh tokens were revoked: the session on the other device works.
+    expect(await userFromSessionCookie(otherDeviceCookie)).toEqual({
+      id: internalId,
+      email,
+    });
   });
 
   it("signs in with an email sign-in link, even with no password", async () => {

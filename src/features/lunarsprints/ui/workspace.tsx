@@ -269,9 +269,8 @@ export function Workspace() {
                         b?.error?.message ??
                           "Sign-out could not be completed. Please try again.",
                       );
-                    // auth_unavailable means this device is signed out but other
-                    // devices may not be. Any other failure kept the session.
-                    if (r.ok || b?.error?.code === "auth_unavailable") {
+                    // On failure the session cookie was kept, so stay signed in.
+                    if (r.ok) {
                       setAuth({ ...auth, user: null });
                       setView(null);
                       current.current = null;

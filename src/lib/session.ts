@@ -111,32 +111,6 @@ export async function createSession(idToken: string) {
   return { cookie, user: { id, email: decoded.email ?? null } };
 }
 
-/**
- * Signs the account out everywhere: revokes its Firebase refresh tokens so
- * every session cookie for it stops working. Returns false when the cookie
- * was already invalid (nothing left to revoke).
- */
-export async function revokeSession(value: string | undefined) {
-  if (!value) return false;
-  let uid: string;
-  try {
-    uid = (await adminAuth().verifySessionCookie(value, false)).uid;
-  } catch (error) {
-    if (isAuthRejection(error)) return false;
-    throw serviceDown();
-  }
-  try {
-    await adminAuth().revokeRefreshTokens(uid);
-  } catch {
-    throw new AppError(
-      "auth_unavailable",
-      "You are signed out on this device, but we could not sign you out on your other devices. Please try again.",
-      503,
-    );
-  }
-  return true;
-}
-
 export function sessionCookieOptions() {
   return {
     httpOnly: true,
