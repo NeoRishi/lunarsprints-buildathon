@@ -22,9 +22,8 @@ export default function Privacy() {
       <h2>What we collect</h2>
       <ul>
         <li>
-          <strong>Account details:</strong> your email address and, if you sign
-          in with Google, the basic profile Google shares (name and email). Your
-          NeoRishi account is shared across NeoRishi products.
+          <strong>Account details:</strong> your email address. Your NeoRishi
+          account is shared across NeoRishi products.
         </li>
         <li>
           <strong>What you write in your sprints:</strong> your intentions,
@@ -83,11 +82,6 @@ export default function Privacy() {
               <td>Google Cloud: hosting and database</td>
               <td>Running the website and app, and storing your sprints</td>
               <td>Region to be confirmed before launch</td>
-            </tr>
-            <tr>
-              <td>Google</td>
-              <td>Sign-in with Google, if you choose it</td>
-              <td>Global</td>
             </tr>
           </tbody>
         </table>
