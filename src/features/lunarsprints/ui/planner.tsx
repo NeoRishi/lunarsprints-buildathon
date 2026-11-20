@@ -4,7 +4,6 @@ import { ArrowLeft, Check, CircleHelp, Pencil } from "lucide-react";
 import type { Answer, Goal, Question, Sprint } from "../contracts";
 import { displayDate } from "../domain";
 import { Button, CheckList, NextButton, Notice, SectionTitle } from "./shared";
-import { VoiceInput } from "./voice";
 import { StoryEditor } from "./story-editor";
 import { ScheduleEditor, CapacitySummary } from "./schedule-editor";
 import type { Send } from "./workspace";
@@ -277,7 +276,6 @@ function IntentionStep({
         title="What’s on your mind?"
         description="Start with your own words. Share what you want, what’s already done, and any constraints you know."
       />
-      <VoiceInput disabled={busy} onTranscript={setValue} />
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -285,7 +283,7 @@ function IntentionStep({
         }}
       >
         <label className="intention-label" htmlFor="intention">
-          Your intention <span>Speak or type, then edit</span>
+          Your intention <span>Type, then edit</span>
         </label>
         <textarea
           id="intention"

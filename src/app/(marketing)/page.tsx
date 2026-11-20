@@ -67,7 +67,9 @@ export default function Landing() {
         <ol className={styles.steps}>
           <li className={styles.step}>
             <h3>Say what you want to move</h3>
-            <p>Speak or type it. Messy is fine; that’s where we start.</p>
+            <p>
+              Type it in your own words. Messy is fine; that’s where we start.
+            </p>
           </li>
           <li className={styles.step}>
             <h3>Shape it together</h3>
@@ -122,7 +124,7 @@ export default function Landing() {
                 Sprints of {MIN_SPRINT_DAYS} to {plans.free.maxSprintDays} days
               </li>
               <li>AI help to shape your goal and steps</li>
-              <li>Voice or text to capture what you want</li>
+              <li>Your own words to capture what you want</li>
             </ul>
             <Link href="/app" className={styles.primary}>
               Start free

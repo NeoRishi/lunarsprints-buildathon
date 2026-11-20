@@ -32,12 +32,6 @@ export default function Privacy() {
           progress reports and notes.
         </li>
         <li>
-          <strong>Voice recordings, only if you choose to record:</strong> the
-          recording is sent for transcription and is not stored by us. The
-          resulting text is saved like anything you type, and you can edit it
-          first.
-        </li>
-        <li>
           <strong>Technical records:</strong> sign-in cookies that keep you
           logged in, basic request logs, and usage counts for AI requests (such
           as timing and token counts, without the content) so we can keep the
