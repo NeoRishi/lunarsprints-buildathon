@@ -11,3 +11,6 @@ next-env.d.ts
 
 docs/evidence/*
 !docs/evidence/README.md
+
+# Private, never committed (original agent instructions, throwaway scripts)
+.private/
