@@ -14,7 +14,7 @@ describe("copy guard", () => {
     const added = Object.entries(found)
       .filter(([key, n]) => n > (known[key] ?? 0))
       .map(([key, n]) => `${key}: ${n} (baseline ${known[key] ?? 0})`);
-    expect(added, "Fix these, see .claude/skills/copy-quality").toEqual([]);
+    expect(added, "Fix these, see .agents/skills/copy-quality").toEqual([]);
   });
 
   it("keeps the baseline honest after fixes", () => {
