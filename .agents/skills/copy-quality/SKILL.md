@@ -1,6 +1,6 @@
 ---
 name: copy-quality
-description: Plain-language and honesty rules for every word a LunarSprints user, reviewer or owner reads. Use when writing or reviewing UI text, error messages, emails, docs, commit messages or PR descriptions.
+description: Plain-language and honesty rules for LunarSprints words. Use whenever you write or review any text a user, reviewer or owner will read, including on-screen labels in .tsx files, error messages from AppError, emails, docs, commit messages and PR descriptions, and whenever a claim, price, limit or testimonial appears.
 ---
 
 # Copy quality

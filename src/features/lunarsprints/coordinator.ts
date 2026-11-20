@@ -45,7 +45,7 @@ import {
   validateStories,
   unique,
 } from "./domain";
-import type { Intelligence } from "./agents/managed";
+import type { Intelligence } from "./agents/intelligence";
 import { NeedsClarification } from "./agents/outcomes";
 import { clarificationBase, planningFacts } from "./planning";
 import {

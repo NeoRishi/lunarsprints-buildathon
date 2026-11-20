@@ -11,6 +11,5 @@ supabase/.branches/
 next-env.d.ts
 *.tsbuildinfo
 
-.vercel/
 docs/evidence/*
 !docs/evidence/README.md

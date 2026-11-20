@@ -1,8 +1,10 @@
 import { it, expect } from "vitest";
-import { applyUsage } from "../src/features/lunarsprints/agents/usage";
-import type { RunRecord } from "../src/features/lunarsprints/agents/managed";
+import {
+  applyUsage,
+  type RunRecord,
+} from "../src/features/lunarsprints/agents/intelligence";
 const metrics = (): RunRecord["metrics"] => ({
-  model: "gpt-6.1-sol",
+  model: "test-model",
   contractVersion: "2.1",
   inputCharacters: 100,
   schemaCharacters: 200,
@@ -22,16 +24,16 @@ it("retains unknown usage as null rather than claiming zero cost", () => {
   expect(m.totalTokens).toBeNull();
   expect(m.usageSource).toBe("unavailable");
 });
-it("records provider token counts and provenance without copying prompts or extra fields", () => {
+it("records reported token counts and provenance without copying prompts or extra fields", () => {
   const m = metrics();
   applyUsage(
     m,
     {
-      input_tokens: 100,
-      input_tokens_details: { cached_tokens: 40 },
-      output_tokens: 50,
-      output_tokens_details: { reasoning_tokens: 10 },
-      total_tokens: 150,
+      inputTokens: 100,
+      cachedInputTokens: 40,
+      outputTokens: 50,
+      reasoningTokens: 10,
+      totalTokens: 150,
     },
     "turn_lookup",
   );
@@ -45,4 +47,15 @@ it("records provider token counts and provenance without copying prompts or extr
     firstOutputMs: 50,
   });
   expect(Object.keys(m)).not.toContain("input");
+});
+it("keeps optional counts null when a provider does not report them", () => {
+  const m = metrics();
+  applyUsage(
+    m,
+    { inputTokens: 10, outputTokens: 5, totalTokens: 15 },
+    "provider_response",
+  );
+  expect(m.cachedInputTokens).toBeNull();
+  expect(m.reasoningTokens).toBeNull();
+  expect(m.totalTokens).toBe(15);
 });

@@ -12,6 +12,7 @@ import {
   ShieldCheck,
   Sparkles,
   Trash2,
+  PenLine,
 } from "lucide-react";
 import type { Command, Sprint } from "../contracts";
 import { MAX_SPRINT_DAYS, MIN_SPRINT_DAYS } from "../contracts";
@@ -338,7 +339,7 @@ export function Workspace() {
             <div className="welcome">
               <div>
                 <h1>
-                  Speak your intention.
+                  Write your intention.
                   <br />
                   <span>Make it a sprint.</span>
                 </h1>
@@ -350,7 +351,7 @@ export function Workspace() {
                 </p>
                 <div className="welcome-flow">
                   <span>
-                    <MicGlyph /> Voice or text
+                    <PenLine size={16} /> In your own words
                   </span>
                   <ChevronRight size={14} />
                   <span>
@@ -655,21 +656,6 @@ export function Workspace() {
         </footer>
       </main>
     </>
-  );
-}
-function MicGlyph() {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.7"
-    >
-      <rect x="9" y="2" width="6" height="13" rx="3" />
-      <path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3m-4 0h8" />
-    </svg>
   );
 }
 function browserTimezone() {

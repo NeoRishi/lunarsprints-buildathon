@@ -1,5 +1,7 @@
 # Historical development notes
 
+> Historical. Step 1 of the buildathon migration removed the AI provider, saved agents, voice transcription and hosting setup described below. AI actions now return a plain "being upgraded" message until the new agent service is connected. The current and target stack are in [`GEMINI.md`](../GEMINI.md).
+
 These cumulative notes describe development history. Historical QA screenshots, raw synthetic model outputs and acceptance receipts remain in the preserved local P2 release; they are not published in this repository. The root README and website guide describe this GitHub delivery. The latest P2 baseline had 113 offline tests. Relative links below retain their original context.
 
 # LunarSprints
@@ -15,7 +17,7 @@ cd /Users/neorishi/Desktop/LunarSprints
 npm run dev
 ```
 
-Open [LunarSprints locally](http://127.0.0.1:3000). Only one server should use port 3000. The ignored `.env.local` has been configured through the approved credential flows. The OpenAI development key uses the seven-day expiration selected during setup. Credentials are excluded from source archives.
+Open [LunarSprints locally](http://127.0.0.1:3000). Only one server should use port 3000. The ignored `.env.local` has been configured through the approved credential flows. Credentials are excluded from source archives.
 
 The app supports Supabase email/password sign-in and signup. The exact development callback `http://127.0.0.1:3000/auth/callback` was added and verified with Supabase. All 17 existing LifeOS redirect entries and the `https://www.neorishi.io` site URL were preserved. Use the 127.0.0.1 URL above: another local app currently occupies localhost over IPv6. Signup confirmation uses a PKCE callback at `/auth/callback`; email delivery and the project's allowed redirect URLs must be verified for the final public domain before release. Live acceptance tests use explicitly marked, email-confirmed synthetic QA accounts rather than sending email to real people.
 
@@ -32,7 +34,7 @@ The migration inspected 102 existing public tables and found no `ls_*` collision
 ## Working journey
 
 1. Choose 15 inclusive calendar days, timezone, available time, daily budgets and an explicit buffer.
-2. Type an intention, or record up to 90 seconds and review a real OpenAI transcript before using it.
+2. Type an intention. (Voice input was turned off in Step 1 and returns in a later step.)
 3. Assess distinct intentions and explicitly select which goals belong in the sprint.
 4. Generate zero to five context-specific clarification questions through existing Agent 03. Recommendations have reasons and provenance; they are never preselected. Custom text overrides a radio answer. Question navigation saves answers; reload reads them from Supabase.
 5. Generate editable SMART goals from confirmed facts. Review assumptions and success criteria, then explicitly approve the exact goal version.
@@ -45,11 +47,11 @@ No production AI path uses canned questions, sample research stories, simulated 
 
 ## Existing agents
 
-All ten resources were listed and inspected in the selected **Personal / LunarSprints** OpenAI project. They are saved **Agents API** resources, not Agents SDK `Agent` instances. Their actual IDs, models, instruction fingerprints and activation phases are in [`config/agent-registry.json`](config/agent-registry.json).
+At the time, ten saved agents hosted by the previous AI provider handled the AI roles. Their registry, client code and SDK packages were removed in Step 1. The role summaries remain in `src/features/lunarsprints/agents/prompts/`.
 
-The canonical topology is an application-owned TypeScript coordinator with bounded Agents SDK function-tool wrappers around official `client.beta.agents.sessions.create({agent_id, ...})` calls. Sessions run with `environment: {type: 'none'}`. There are no duplicate saved agents, no second SDK model orchestrator, no model database-write tools and no autonomous delegation. The existing prompts remain unchanged on the Platform; v2 clarification/output contracts are session overrides. Agent 03 uses the verified `gpt-6-sol` session override (`OPENAI_SMART_MODEL`) after its saved `gpt-6-astra` model exceeded the timeout twice on a competing-goal context; the same resource completed the comparison in about 20 seconds with the override. Saved configurations remain unchanged. Agent 05 now uses a benchmarked `gpt-6.1-sol` session override (editable via `OPENAI_STORY_MODEL`); remaining roles inherit their verified saved model. Sessions use low reasoning effort. The compact v2.1 frame keeps stage-specific provenance and clarification recovery.
+The topology was an application-owned TypeScript coordinator that called each saved agent through a bounded wrapper, with no model database-write tools and no autonomous delegation. Two roles (goal clarification and work breakdown) used per-session model overrides that were benchmarked for speed. The provider-specific details were removed with the code in Step 1; git history keeps them.
 
-Planning calls Agents 02, 03 and 05. Application copy replaces the former cosmetic Agent 01 call; its saved resource remains intact. Scheduling uses deterministic code; the user can optionally request an explanation from saved Agent 07. Agent 04's arithmetic is implemented by deterministic capacity services. Agent 08 next-action and Agent 10 reflection controls are wired to their saved resources. Agent 09 provides semantic replan proposals under deterministic validation and explicit approval. Agent 06's opt-in sourced rhythm guidance remains later-phase work. See the verified-use table in [`IMPLEMENTATION_STATUS.md`](IMPLEMENTATION_STATUS.md).
+Planning calls Agents 02, 03 and 05. Application copy replaces the former cosmetic Agent 01 call; its saved resource remains intact. Scheduling uses deterministic code; the user can optionally request an explanation from saved Agent 07. Agent 04's arithmetic is implemented by deterministic capacity services. Agent 08 next-action and Agent 10 reflection controls were wired to their saved resources. Agent 09 provides semantic replan proposals under deterministic validation and explicit approval. Agent 06's opt-in sourced rhythm guidance remains later-phase work. See the verified-use table in [`IMPLEMENTATION_STATUS.md`](IMPLEMENTATION_STATUS.md).
 
 ## Persistence and security
 
@@ -77,13 +79,10 @@ npm run build
 
 All 85 offline tests passed. Offline tests include a real embedded PostgreSQL engine for migrations, RLS, service permissions, transactional revisions, stale updates, idempotency and rate counters. PGlite is a development-test dependency; the application uses Supabase.
 
-Live checks require the explicitly authorized LifeOS project and a running local server:
+Live checks require the explicitly authorized LifeOS project and a running local server. Checks that ask for AI suggestions fail until the new agent service is connected:
 
 ```sh
-npm run test:live       # Existing Agent 03 resource + structured clarification
-npm run test:eval       # Diverse synthetic intentions and competing goals
 npm run test:e2e        # Real planning, authenticated persistence and board checks
-npm run test:browser    # MCQ/custom navigation, mobile, mic denial and real STT
 npm run test:multi      # Two competing goals and explicit overload approval
 npm run test:execution  # Real Agent 08/10 board controls; no silent state changes
 npm run test:auth       # Duplicate signup, existing login and live password updates
@@ -103,8 +102,6 @@ The product still needs public-launch operational review and broader evaluation;
 
 ## Official integration references
 
-- [Saved agent configuration and session overrides](https://developers.openai.com/api/docs/guides/agents-api/configuration)
-- [Agents SDK TypeScript](https://openai.github.io/openai-agents-js/)
 - [Supabase server-side authentication](https://supabase.com/docs/guides/auth/server-side/creating-a-client)
 - [Supabase RLS](https://supabase.com/docs/guides/database/postgres/row-level-security)
 
@@ -120,6 +117,6 @@ Confirmed answers are normalized with their selected/custom wording, provenance 
 
 `docs/evidence/clarification-recovery.json` records the full live synthetic legacy-book journey and unknown-scope proposal. `p0-final-discovery.json` records the final discovery/consent path. Fixtures are explicitly synthetic; seeded legacy approvals are not represented as newly AI-generated goals. The real user's stalled sprint is not modified by acceptance tests. P1 cost/latency optimization and broader release hardening remain separate work.
 
-P1 performance changes, measured results and remaining limits: [`docs/P1_PLANNING_PERFORMANCE.md`](docs/P1_PLANNING_PERFORMANCE.md). Run `npm run test:performance` for the marked QA acceptance journey and `npm run test:benchmark-planning` for the four-call comparison (both use real API calls).
+P1 performance changes, measured results and remaining limits: [`docs/P1_PLANNING_PERFORMANCE.md`](docs/P1_PLANNING_PERFORMANCE.md). Run `npm run test:performance` for the marked QA acceptance journey (it uses real AI calls, so it fails until the new agent service is connected).
 
 P2 scheduling now enforces each goal deadline and zero-minute rest days, propagates prerequisite deadlines, saves actionable conflicts without partial allocations, and exposes daily buffer use for approval. Schedule edits remain available after optional advice. See [`docs/P2_SCHEDULING_RELIABILITY.md`](docs/P2_SCHEDULING_RELIABILITY.md) for the bounded heuristic, migration-free implementation, regression scenarios and live acceptance.

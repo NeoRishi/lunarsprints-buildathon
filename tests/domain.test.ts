@@ -15,7 +15,7 @@ import {
   hash,
   hashes,
 } from "../src/features/lunarsprints/coordinator";
-import type { Intelligence } from "../src/features/lunarsprints/agents/managed";
+import type { Intelligence } from "../src/features/lunarsprints/agents/intelligence";
 import type {
   ClarificationPlan,
   Command,

@@ -32,12 +32,6 @@ export default function Privacy() {
           progress reports and notes.
         </li>
         <li>
-          <strong>Voice recordings, only if you choose to record:</strong> the
-          recording is sent for transcription and is not stored by us. The
-          resulting text is saved like anything you type, and you can edit it
-          first.
-        </li>
-        <li>
           <strong>Technical records:</strong> sign-in cookies that keep you
           logged in, basic request logs, and usage counts for AI requests (such
           as timing and token counts, without the content) so we can keep the
@@ -88,14 +82,6 @@ export default function Privacy() {
               <td>Tokyo, Japan</td>
             </tr>
             <tr>
-              <td>OpenAI</td>
-              <td>
-                AI suggestions for goals, steps and replans, and voice
-                transcription
-              </td>
-              <td>United States</td>
-            </tr>
-            <tr>
               <td>Vercel</td>
               <td>Hosting the website and app</td>
               <td>Tokyo, Japan, with a global network</td>
@@ -116,8 +102,6 @@ export default function Privacy() {
       <p>
         This means your data is processed outside India. Each provider handles
         it under its own terms and only to deliver its part of the service.
-        OpenAI’s API terms state that data sent through its API is not used to
-        train its models by default.
       </p>
 
       <h2>How long we keep it</h2>

@@ -28,9 +28,7 @@ When deploying LunarSprints to a public HTTPS origin (for example `https://sprin
    - `NEXT_PUBLIC_SUPABASE_URL=https://jhkoxgyxrihsuhpjqkxc.supabase.co`
    - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=<publishable-key>`
    - `SUPABASE_SECRET_KEY=<service-role-secret-key>` (server-only; never exposed to `NEXT_PUBLIC_*` or client bundles).
-   - `OPENAI_API_KEY=<project-api-key>` (server-only).
-   - `OPENAI_PROJECT_ID=proj_vI5AtNhbZISblXntDQZHNhZ1`
-   - `OPENAI_SMART_MODEL=gpt-6-sol`
+   - AI service variables: none while no AI engine is connected (buildathon Step 1). The agent service settings arrive in Step 3; see `GEMINI.md`.
 2. **Supabase Auth Allowlist Update (Additive Only)**:
    - Append the exact production callback URLs to `uri_allow_list` without removing any existing entries:
      - `https://<production-host>/auth/callback`
@@ -60,11 +58,11 @@ When deploying LunarSprints to a public HTTPS origin (for example `https://sprin
 1. **Database-Backed Rate Limits (`public.ls_claim_rate`)**:
    - `commands` bucket: max `90` mutating commands per `300` seconds per user.
    - `ai` bucket: max `30` AI commands (some commands invoke multiple specialists) (`assess`, `select_intents`, `synthesize`, `regenerate_goals`, `generate_stories`, `schedule`, `request_replan`, `next_action`, `reflect`) per `3600` seconds per user.
-   - `voice` bucket: max `15` audio transcriptions per `3600` seconds per user.
+   - `voice` bucket: unused while voice input is off (buildathon Step 1).
 2. **Bounded Timeouts & Cancellation**:
    - `story_decomposer`, `adaptive_backlog`, and multi-intent `smart_goal` sessions enforce a `180,000 ms` timeout; ordinary calls enforce a `90,000 ms` timeout. Complex clarification fixtures hit the shorter deadline during verification; the same model/resource is retained with a longer bounded wait.
    - Unfinished remote turns trigger best-effort `agent.session.input.cancel` events, and the UI can stop waiting, but disconnecting the observer does not guarantee remote cancellation or prevent a server commit. Refresh/retry with the original idempotency key to reconcile the outcome.
 3. **Provider Spend Cap**:
-   - Because the OpenAI Managed Agents session endpoint rejects the SDK `spend_control` parameter at runtime, review the available project billing limits and alert thresholds in the OpenAI platform dashboard; verify whether the selected control is enforced or advisory for project `lunarsprints` (`proj_vI5AtNhbZISblXntDQZHNhZ1`). No dollar cap was configured or proven by this release.
+   - No dollar cap was configured or proven by this release. When the new agent service is connected, set budget alerts and quota limits on its cloud project and verify whether each control is enforced or advisory.
 4. **Error & Log Redaction (`redactSensitive`)**:
-   - `src/lib/http.ts` and `src/features/lunarsprints/agents/managed.ts` scrub `Bearer` tokens, `sk-*` / `sb_*` / `re_*` API keys, JWTs, and `Cookie` / `Authorization` headers before returning HTTP error payloads or writing diagnostic logs.
+   - `src/lib/http.ts` scrubs `Bearer` tokens, `sk-*` / `sb_*` / `re_*` API keys, JWTs, and `Cookie` / `Authorization` headers before returning HTTP error payloads or writing diagnostic logs.

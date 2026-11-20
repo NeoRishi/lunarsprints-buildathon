@@ -1,12 +1,18 @@
 # LunarSprints
 
-Turn a vague text or spoken intention into a realistic, approved and executable sprint of 3 to 45 days.
+Turn a vague intention into a realistic, approved and executable sprint of 3 to 45 days.
 
-This repository contains the verified P2 Next.js application: dynamic goal clarification, editable goals and work breakdown, deterministic scheduling, approval gates, persistent sprint data, an execution board and explicit adaptive replanning.
+This repository contains the Next.js application: dynamic goal clarification, editable goals and work breakdown, deterministic scheduling, approval gates, persistent sprint data, an execution board and explicit adaptive replanning.
+
+## Buildathon migration
+
+This copy is moving to a Google Cloud stack in seven steps. Project rules, the target stack and the current migration status are in [`GEMINI.md`](GEMINI.md).
+
+Step 1 is done: the previous AI vendor code, hosting config and voice transcription are removed. AI actions show "AI suggestions are being upgraded. Your saved plan is safe." Everything that does not need AI (viewing sprints, today's plan, editing milestones and schedules, approvals and progress) still works. Supabase remains the database and sign-in until Step 2.
 
 ## Run locally
 
-Use Node 22–24. Copy `.env.example` to `.env.local` and configure credentials privately. Use the existing approved Supabase/OpenAI projects; never put secrets into source control or chat.
+Use Node 22 to 24. Copy `.env.example` to `.env.local` and fill in the values privately. Use the existing approved Supabase project; never put secrets into source control or chat.
 
 ```sh
 npm ci
@@ -24,22 +30,17 @@ npm test
 npm run build
 ```
 
-The preserved P2 baseline had 113 offline tests across 8 files. Live scripts are separate: inspect their account/project guards before running them, because they incur provider cost and write synthetic cloud data.
+Live scripts in `scripts/` are separate: inspect their account and project guards before running them, because they write synthetic data to the shared database. Scripts that ask for AI suggestions fail until the new agent service is connected.
 
-## Run as a website
+## Deployment
 
-Deploy this full-stack Next.js app on Vercel or a compatible Node host. GitHub stores the source; GitHub Pages cannot execute its authenticated APIs, server-side AI calls or database writes. See [Website deployment](docs/WEBSITE_DEPLOYMENT.md) for configuration and acceptance checks.
-
-Use a separate `lunar-sprints` hosting project. Existing older LunarSprints deployments must not be overwritten implicitly. Server secrets belong in the hosting provider's environment settings, never in GitHub files.
+`next.config.ts` builds a standalone server for a Cloud Run container. The container, build and deployment setup arrive in Step 2. Production reads its public address only from `APP_ORIGIN`. Server secrets belong in Secret Manager, never in GitHub files.
 
 ## Architecture and guardrails
 
-- TypeScript, Next.js, React, OpenAI Agents SDK/API and Supabase.
-- Shared backend: `NeoRishi-LifeOS-Final` (`jhkoxgyxrihsuhpjqkxc`). No whole-project database push/reset; preserve unrelated tables, Auth triggers, Google credentials, Resend SMTP and existing redirects.
-- OpenAI project `lunarsprints` (`proj_vI5AtNhbZISblXntDQZHNhZ1`): reuse the exact ten saved IDs in `config/agent-registry.json`; do not duplicate or mutate remote agents.
-- The application owns deterministic validation, capacity, dates, persistence and explicit approvals. Models propose content.
+- TypeScript, Next.js, React and Supabase today. Target: Cloud Run, a Python ADK agent service using Gemini, Firebase Auth and Cloud SQL (see `GEMINI.md`).
+- Shared backend: `NeoRishi-LifeOS-Final` (`jhkoxgyxrihsuhpjqkxc`). No whole-project database push or reset; preserve unrelated tables, Auth triggers, Google credentials, Resend SMTP and existing redirects.
+- All AI calls go through the `Intelligence` interface in `src/features/lunarsprints/agents/intelligence.ts`. Models propose content; the application owns validation, capacity, dates, persistence and explicit approvals.
 - Payments, real lunar data and durable background generation are proposed next-phase work, not current integrations.
 
-Read the [architecture and next-version blueprint](docs/architecture/LunarSprints_Architecture_and_Next_Version.md), [P2 scheduling notes](docs/P2_SCHEDULING_RELIABILITY.md), [public release hardening](docs/PUBLIC_RELEASE_HARDENING.md) and [historical development notes](docs/DEVELOPMENT_BASELINE.md).
-
-The original Desktop P2 copy and frozen release archive remain unchanged. Private historical QA receipts/screenshots and environment files were excluded from this GitHub delivery. Website deployment alone does not establish public SaaS readiness.
+Read the [architecture and next-version blueprint](docs/architecture/LunarSprints_Architecture_and_Next_Version.md) (to be redrawn for the new stack), [P2 scheduling notes](docs/P2_SCHEDULING_RELIABILITY.md), [public release hardening](docs/PUBLIC_RELEASE_HARDENING.md) and [historical development notes](docs/DEVELOPMENT_BASELINE.md).

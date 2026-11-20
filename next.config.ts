@@ -23,16 +23,12 @@ const productionHeaders = [
   },
 ];
 const config: NextConfig = {
-  // Vercel sets NEXT_DEPLOYMENT_ID and Next refuses a build whose config
-  // names a different id, so use it whenever it is present.
-  deploymentId:
-    process.env.NEXT_DEPLOYMENT_ID ??
-    process.env.DEPLOYMENT_VERSION ??
-    "lunarsprints-local",
+  // A self-contained server bundle for the Cloud Run container image.
+  output: "standalone",
+  deploymentId: process.env.DEPLOYMENT_VERSION ?? "lunarsprints-local",
   poweredByHeader: false,
   devIndicators: false,
   turbopack: { root: process.cwd() },
-  serverExternalPackages: ["@openai/agents", "openai"],
   async headers() {
     return [
       {
@@ -43,7 +39,7 @@ const config: NextConfig = {
           { key: "X-Frame-Options", value: "DENY" },
           {
             key: "Permissions-Policy",
-            value: "camera=(), geolocation=(), microphone=(self)",
+            value: "camera=(), geolocation=(), microphone=()",
           },
           ...(process.env.NODE_ENV === "production" ? productionHeaders : []),
         ],

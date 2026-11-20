@@ -1,5 +1,5 @@
 /**
- * Deterministic copy checks for LunarSprints. See .claude/skills/copy-quality.
+ * Deterministic copy checks for LunarSprints. See .agents/skills/copy-quality.
  *
  * Two scans:
  * 1. Em-dashes anywhere in source, docs and project guidance.
@@ -17,9 +17,9 @@ export const ROOT = new URL("..", import.meta.url).pathname;
 const EM_DASH = "\u2014";
 
 /** Folders and root files checked for em-dashes. */
-const DASH_DIRS = ["src", "docs", ".claude", "tests"];
+const DASH_DIRS = ["src", "docs", ".agents", "tests"];
 const DASH_ROOT_FILES = [
-  "CLAUDE.md",
+  "GEMINI.md",
   "README.md",
   "IMPLEMENTATION_STATUS.md",
   "project-context.json",
@@ -27,8 +27,9 @@ const DASH_ROOT_FILES = [
 const DASH_EXTENSIONS = new Set([".ts", ".tsx", ".css", ".md", ".json"]);
 
 /**
- * Exempt paths. The prompt files are reference copies of the saved OpenAI
- * agents and must stay identical to them, so they are never rewritten here.
+ * Exempt paths. The prompt files are reference summaries of each agent role's
+ * instructions, kept unchanged for the new agent service, so they are never
+ * rewritten here.
  */
 const EXEMPT = [
   `src${sep}features${sep}lunarsprints${sep}agents${sep}prompts${sep}`,

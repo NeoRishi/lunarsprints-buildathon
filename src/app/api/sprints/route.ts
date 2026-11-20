@@ -1,6 +1,5 @@
-import { reconcileUsage } from "@/features/lunarsprints/agents/usage";
 import { randomUUID } from "node:crypto";
-import { after, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { authenticated } from "@/lib/supabase/server";
 import { failure, jsonBody, sameOrigin } from "@/lib/http";
 import { commandSchema, type Sprint } from "@/features/lunarsprints/contracts";
@@ -16,14 +15,8 @@ import {
   hashes,
   newSprint,
 } from "@/features/lunarsprints/coordinator";
-import type { RunRecord } from "@/features/lunarsprints/agents/managed";
-import { createIntelligence } from "@/features/lunarsprints/ai/select";
-import {
-  commit,
-  rateLimit,
-  recordRuns,
-  replay,
-} from "@/features/lunarsprints/store";
+import { UnavailableIntelligence } from "@/features/lunarsprints/agents/intelligence";
+import { commit, rateLimit, replay } from "@/features/lunarsprints/store";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
@@ -117,16 +110,10 @@ export async function GET(request: Request) {
   }
 }
 export async function POST(request: Request) {
-  let userId: string | undefined;
-  let sprintId: string | undefined;
-  const runs: RunRecord[] = [];
-  let settle = async () => {};
   try {
     sameOrigin(request);
     const { client, user } = await authenticated();
-    userId = user.id;
     const command = commandSchema.parse(await jsonBody(request));
-    sprintId = command.sprintId;
     const requestHash = hash(command);
     const prior = await replay(user.id, command.idempotencyKey, requestHash);
     if (prior) {
@@ -209,13 +196,13 @@ export async function POST(request: Request) {
         ].includes(command.action)
       )
         await rateLimit(user.id, "ai", 30, 3600);
-      const engine = createIntelligence({
-        userId: user.id,
-        sprintId: command.sprintId,
-        onRun: (r) => runs.push(r),
-      });
-      settle = engine.settle;
-      state = await coordinate(existing, command, engine.ai);
+      // No AI engine is connected during the platform move. AI actions fail
+      // with a plain message; every other action works without AI.
+      state = await coordinate(
+        existing,
+        command,
+        new UnavailableIntelligence(),
+      );
     }
     const saved = await commit(user.id, command, state, requestHash);
     return NextResponse.json(view(saved), {
@@ -223,22 +210,6 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     return failure(error);
-  } finally {
-    if (userId && sprintId && runs.length) {
-      const owner = userId,
-        id = sprintId;
-      const waitForComparisons = settle;
-      after(async () => {
-        try {
-          // Shadow comparison runs finish here, after the user has the answer.
-          await waitForComparisons();
-          await reconcileUsage(runs);
-          await recordRuns(owner, id, runs);
-        } catch {
-          console.error("Agent run telemetry unavailable");
-        }
-      });
-    }
   }
 }
 export async function DELETE(request: Request) {

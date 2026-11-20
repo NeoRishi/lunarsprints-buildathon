@@ -1,6 +1,6 @@
 ---
 name: ui-quality
-description: Visual quality rules for LunarSprints screens and pages. Use before writing or reviewing any .tsx, .css or CSS module change that affects what a user sees.
+description: Moonlit visual rules for LunarSprints screens and pages. Use before writing or reviewing any change to a .tsx component, src/app/globals.css or a CSS module that alters what a user sees, including layout, colour, type, motion, focus styles or the landing page.
 ---
 
 # UI quality (Moonlit)
@@ -22,7 +22,7 @@ Moonlit: a dark night ground, moonlight text, one soft gold accent, thin serif h
    * no eyebrow line above a heading
    * no labels in tracked capitals or small caps (labels, captions, table heads and tags use the body face, a step smaller, sentence case)
    * no single italic or coloured word inside a heading
-   * no strings of meta joined by middle dots ("Voice or text · editable")
+   * no strings of meta joined by middle dots ("Free · editable")
    * no arrows glued to link text
    * no emoji used as icons
    * no card inside a card
@@ -46,4 +46,4 @@ Moonlit: a dark night ground, moonlight text, one soft gold accent, thin serif h
 1. Check each hard rule above against the diff.
 2. Run `npm test` (the copy guard catches em-dashes and on-screen jargon).
 3. Look at the change at 375px and 1280px wide.
-4. Read `.claude/skills/copy-quality/SKILL.md` for every visible string you added.
+4. Apply the copy-quality skill (`.agents/skills/copy-quality/SKILL.md`) to every visible string you added.

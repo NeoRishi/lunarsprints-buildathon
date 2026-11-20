@@ -9,25 +9,24 @@
     "github": "NeoRishi/lunar-sprints",
     "defaultBranch": "main",
     "localPath": "~/Desktop/LunarSprints",
-    "mergeDeploysToProduction": true
+    "mergeDeploysToProduction": true,
+    "buildathonCopy": "Branched from main at commit e69e8dc for the Google Startup Buildathon"
   },
   "stack": {
     "framework": "Next.js App Router",
     "language": "TypeScript",
     "styling": "Plain CSS with Moonlit tokens in src/app/globals.css plus CSS modules (no Tailwind)",
     "auth_db": "Supabase via @supabase/ssr",
-    "tests": ["Vitest", "Playwright"],
+    "tests": [
+      "Vitest",
+      "Playwright"
+    ],
     "packageManager": "npm",
     "validation": "Zod",
-    "node": ">=22 <25"
+    "node": ">=22 <25",
+    "build": "next.config.ts output standalone, for a Cloud Run container"
   },
   "infrastructure": {
-    "vercel": {
-      "team": "neorishis-projects",
-      "project": "lunar-sprints",
-      "region": "Tokyo",
-      "productionUrl": "https://sprints.neorishi.io"
-    },
     "supabase": {
       "project": "NeoRishi LifeOS",
       "ref": "jhkoxgyxrihsuhpjqkxc",
@@ -38,29 +37,29 @@
       "tablePrefix": "ls_"
     },
     "email": "Resend",
-    "dns": "Hostinger (neorishi.io)"
+    "dns": "Hostinger (neorishi.io)",
+    "productionUrl": "https://sprints.neorishi.io",
+    "hosting": "Moving to Cloud Run in Step 2 (see GEMINI.md)"
   },
   "envVarNames": [
     "NEXT_PUBLIC_SUPABASE_URL",
     "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
     "SUPABASE_SECRET_KEY",
-    "OPENAI_API_KEY",
-    "OPENAI_PROJECT_ID",
-    "OPENAI_SMART_MODEL",
-    "APP_ORIGIN"
+    "APP_ORIGIN",
+    "DEPLOYMENT_VERSION",
+    "LUNARSPRINTS_DIAGNOSTICS"
   ],
   "ai": {
     "current": {
-      "provider": "OpenAI",
-      "openaiProject": "proj_vI5AtNhbZISblXntDQZHNhZ1",
-      "savedAgents": 10,
-      "model": "gpt-6-astra",
-      "reasoning": "medium",
-      "registryFile": "config/agent-registry.json",
-      "promptReferenceDir": "src/features/lunarsprints/agents/prompts/",
-      "runtimeCheck": "src/features/lunarsprints/agents/managed.ts + registry-check.ts (rejects instruction-hash mismatch)",
-      "agent05Hash": "6eb8815ed6852abdcf9fb9a548bda86c9cbbec0c5451429080afb6abecd24357",
-      "promptReferenceNote": "prompts/*.md are short summaries, not the full saved instructions",
+      "status": "Not connected. AI actions return ai_not_connected (503): 'AI suggestions are being upgraded. Your saved plan is safe.'",
+      "interface": "src/features/lunarsprints/agents/intelligence.ts (Intelligence, UnavailableIntelligence)",
+      "keptForAgentService": [
+        "src/features/lunarsprints/agents/contract.ts",
+        "src/features/lunarsprints/agents/policies.ts",
+        "src/features/lunarsprints/agents/outcomes.ts",
+        "src/features/lunarsprints/agents/prompts/"
+      ],
+      "promptReferenceNote": "prompts/*.md are short summaries, not full instructions",
       "rolesInvoked": [
         "smart_goal",
         "intent_alignment",
@@ -75,24 +74,22 @@
         "capacity": "never called",
         "rhythm": "disabled"
       },
-      "storyModel": "OPENAI_STORY_MODEL, default gpt-6.1-sol"
+      "voice": "Off until Gemini Live API. Recording header check kept in src/lib/audio.ts"
     },
     "target": {
-      "orchestrator": "LangGraph",
-      "modelLayer": "LangChain model wrappers (langchain-openai now, swappable to Anthropic later)",
-      "mustHave": "A public, authenticated HTTP API that runs the agent workflows",
-      "avoid": [
-        "OpenAI Agents SDK lock-in",
-        "CrewAI",
-        "LangChain as the orchestrator"
-      ],
-      "billing": "Use OpenAI API credits for model calls",
-      "decisions": {
-        "runtime": "LangGraph.js inside Next.js API routes on Vercel",
-        "state": "Shared LifeOS Supabase, new additive ls_ tables with RLS and a custom checkpointer",
-        "auth": "Supabase JWT first, hashed scoped API keys in a later PR",
-        "urls": "/api/v1/agents/{role}/runs, /api/v1/workflows/{name}/runs, /api/v1/runs/{id}, /api/v1/runs/{id}/resume, /api/v1/openapi.json"
-      }
+      "agentService": "Separate Python ADK service on Cloud Run using Gemini",
+      "voice": "Gemini Live API",
+      "auth": "Firebase Auth",
+      "database": "Cloud SQL for PostgreSQL",
+      "analytics": "BigQuery plus a data agent",
+      "reminders": "Firebase Cloud Messaging",
+      "operations": [
+        "Secret Manager",
+        "Cloud Build",
+        "Artifact Registry",
+        "Cloud Logging",
+        "Cloud Trace"
+      ]
     }
   },
   "productDecisions": {
@@ -104,7 +101,7 @@
     "freeTier": "1 active sprint of 3 to 15 days (config/plans.json)",
     "payments": "On hold. LunarSprints+ Rs 299/month shown as coming soon.",
     "login": "One universal NeoRishi login, open signup",
-    "reminders": "Email via Resend",
+    "reminders": "Email via Resend today; Firebase Cloud Messaging is the target",
     "visualDirection": "Moonlit: dark night ground, moonlight text, one soft gold accent, thin serif headlines, minimal",
     "plainLanguage": {
       "avoidOnScreen": [
@@ -113,7 +110,12 @@
         "agent names",
         "semantic replan"
       ],
-      "use": ["Done means", "milestones", "steps", "Adjust the plan"]
+      "use": [
+        "Done means",
+        "milestones",
+        "steps",
+        "Adjust the plan"
+      ]
     },
     "plusTier": "Coming soon: up to 3 active sprints of up to 45 days (config/plans.json)"
   },
@@ -124,14 +126,14 @@
     "Preserve RLS; no service-role shortcuts in user paths",
     "Server-authoritative identity and dates",
     "Additive migrations only",
-    "No secrets in code, chat, logs or commits"
+    "No secrets in code, chat, logs or commits",
+    "No silent fallbacks: if AI is unavailable, show an honest message and keep the saved plan safe"
   ],
   "workingRules": [
     "Branch, PR, stop. Owner merges.",
     "No reset, force push, branch deletion, history rewrite or squash",
     "lint, typecheck, vitest and build must pass before every PR",
-    "Ask before live DB changes, DNS, Vercel settings or deleting files",
-    "Never create, edit or delete saved OpenAI agents; write a Codex prompt for the owner instead",
+    "Ask before live DB changes, DNS, cloud project settings or deleting files",
     "Stop at the requested phase and report"
   ],
   "communication": [
@@ -146,9 +148,19 @@
     "goal": "Remove AI-slop from the product: UI, copy and code quality"
   },
   "quality": {
-    "uiGuide": ".claude/skills/ui-quality/SKILL.md",
-    "copyGuide": ".claude/skills/copy-quality/SKILL.md",
+    "uiGuide": ".agents/skills/ui-quality/SKILL.md",
+    "copyGuide": ".agents/skills/copy-quality/SKILL.md",
     "copyGuardTest": "tests/copy-guard.test.ts",
-    "notices": "docs/THIRD_PARTY_NOTICES.md"
+    "notices": "docs/THIRD_PARTY_NOTICES.md",
+    "reviewers": [
+      ".agents/skills/silent-failure-hunter/SKILL.md",
+      ".agents/skills/refactor-cleaner/SKILL.md"
+    ],
+    "projectRules": "GEMINI.md"
+  },
+  "migration": {
+    "plan": "7 steps for the Google Startup Buildathon",
+    "step1": "Done: clean slate, previous AI vendors, hosting config and voice transcription removed",
+    "supabase": "Still in use until Step 2"
   }
 }
