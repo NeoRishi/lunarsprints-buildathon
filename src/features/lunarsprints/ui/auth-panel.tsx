@@ -1,65 +1,196 @@
 "use client";
 import { useRef, useState } from "react";
-import type { AuthCommand } from "@/lib/auth";
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+  sendPasswordResetEmail,
+  sendSignInLinkToEmail,
+  signInWithEmailAndPassword,
+  type User,
+} from "firebase/auth";
+import { clientAuth } from "@/lib/firebase/client";
+import { EMAIL_FOR_SIGN_IN_KEY, PASSWORD_MAX, PASSWORD_MIN } from "@/lib/auth";
 import { Button, Notice } from "./shared";
+import { messageFor, startSession } from "./auth-client";
+
+type Mode = "login" | "signup" | "link" | "verify";
 
 export function AuthPanel({
+  callbackUrl,
   onAuthenticated,
 }: {
+  callbackUrl: string;
   onAuthenticated: () => Promise<void>;
 }) {
-  const [mode, setMode] = useState<"login" | "signup">("login");
+  const [mode, setMode] = useState<Mode>("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
   const emailInput = useRef<HTMLInputElement>(null);
+  // The account waiting for email confirmation, kept in memory only.
+  const pending = useRef<User | null>(null);
+  // Where confirmation and password emails send the user back to.
+  const appUrl = new URL("/app", callbackUrl).href;
 
-  async function submit(action: AuthCommand["action"]) {
-    if (busy || (action !== "google" && !emailInput.current?.reportValidity()))
-      return;
+  async function run(work: () => Promise<void>, needsEmail = true) {
+    if (busy || (needsEmail && !emailInput.current?.reportValidity())) return;
     setBusy(true);
     setError("");
     setNotice("");
     try {
-      const r = await fetch("/api/auth", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action,
-          ...(action === "google" ? {} : { email: email.trim() }),
-          ...(["login", "signup"].includes(action) ? { password } : {}),
-        }),
-      });
-      const result = await r.json();
-      if (!r.ok)
-        throw new Error(
-          result.error?.message ??
-            "This request could not be completed. Please try again.",
-        );
-      if (result.redirectUrl) {
-        window.location.assign(result.redirectUrl);
-        return;
-      }
-      if (
-        ["resend_confirmation", "request_password_reset"].includes(action) ||
-        result.needsConfirmation
-      ) {
-        setNotice(result.message);
-        setPassword("");
-        setMode("login");
-      } else await onAuthenticated();
+      await work();
     } catch (e) {
-      setError(
-        e instanceof Error
-          ? e.message
-          : "Connection unavailable. Please try again.",
-      );
+      setError(messageFor(e));
     } finally {
       setBusy(false);
     }
   }
+
+  async function finish(user: User) {
+    if (!user.emailVerified) {
+      pending.current = user;
+      setPassword("");
+      setMode("verify");
+      return;
+    }
+    await startSession(user);
+    await onAuthenticated();
+  }
+
+  const signUp = () =>
+    run(async () => {
+      if (password.length < PASSWORD_MIN || password.length > PASSWORD_MAX)
+        throw new Error(
+          `Use ${PASSWORD_MIN} to ${PASSWORD_MAX} characters for your password.`,
+        );
+      const auth = await clientAuth();
+      const { user } = await createUserWithEmailAndPassword(
+        auth,
+        email.trim(),
+        password,
+      );
+      await sendEmailVerification(user, { url: appUrl });
+      await finish(user);
+    });
+
+  const signIn = () =>
+    run(async () => {
+      const auth = await clientAuth();
+      const { user } = await signInWithEmailAndPassword(
+        auth,
+        email.trim(),
+        password,
+      );
+      await finish(user);
+    });
+
+  const sendLink = () =>
+    run(async () => {
+      const auth = await clientAuth();
+      const address = email.trim();
+      await sendSignInLinkToEmail(auth, address, {
+        url: callbackUrl,
+        handleCodeInApp: true,
+      });
+      try {
+        window.localStorage.setItem(EMAIL_FOR_SIGN_IN_KEY, address);
+      } catch {
+        // Storage can be blocked. The callback page then asks for the email.
+      }
+      setNotice(
+        `We sent a sign-in link to ${address}. Open it on this device to sign in. Check your spam folder if it does not arrive in a few minutes.`,
+      );
+    });
+
+  const forgot = () =>
+    run(async () => {
+      const auth = await clientAuth();
+      await sendPasswordResetEmail(auth, email.trim(), {
+        url: appUrl,
+      });
+      setNotice(
+        "If an account uses this email, we sent a link to choose a new password. Check your inbox and spam folder.",
+      );
+    });
+
+  const resend = () =>
+    run(async () => {
+      const user = pending.current;
+      if (!user) {
+        setMode("login");
+        throw new Error("Sign in again to get a new confirmation email.");
+      }
+      await sendEmailVerification(user, { url: appUrl });
+      setNotice("We sent a new confirmation email. Use the newest one.");
+    }, false);
+
+  const confirmed = () =>
+    run(async () => {
+      const user = pending.current;
+      if (!user) {
+        setMode("login");
+        throw new Error("Sign in with your email and password to continue.");
+      }
+      await user.reload();
+      if (!user.emailVerified)
+        throw new Error(
+          "Your email is not confirmed yet. Open the link in the email we sent, then try again.",
+        );
+      pending.current = null;
+      await startSession(user);
+      await onAuthenticated();
+    }, false);
+
+  function switchTo(next: Mode) {
+    setMode(next);
+    setError("");
+    setNotice("");
+  }
+
+  if (mode === "verify")
+    return (
+      <section className="panel auth-panel">
+        <div>
+          <h2>Check your inbox to confirm your email</h2>
+          <p>
+            We sent a confirmation link to {email.trim() || "your email"}. Open
+            it, then come back here and continue.
+          </p>
+        </div>
+        <div className="auth-help">
+          <Button busy={busy} onClick={() => void confirmed()}>
+            I have confirmed my email
+          </Button>
+          <Button secondary busy={busy} onClick={() => void resend()}>
+            Send the email again
+          </Button>
+        </div>
+        <button
+          type="button"
+          className="text-button"
+          disabled={busy}
+          onClick={() => {
+            pending.current = null;
+            switchTo("login");
+          }}
+        >
+          Use a different account
+        </button>
+        {notice && (
+          <div role="status">
+            <Notice>{notice}</Notice>
+          </div>
+        )}
+        {error && (
+          <div role="alert">
+            <Notice warning>{error}</Notice>
+          </div>
+        )}
+      </section>
+    );
+
   return (
     <section className="panel auth-panel">
       <div>
@@ -72,21 +203,14 @@ export function AuthPanel({
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          void submit(mode);
+          void (mode === "signup"
+            ? signUp()
+            : mode === "link"
+              ? sendLink()
+              : signIn());
         }}
         aria-busy={busy}
       >
-        <Button
-          type="button"
-          secondary
-          busy={busy}
-          onClick={() => void submit("google")}
-        >
-          Continue with Google
-        </Button>
-        <div className="auth-divider">
-          <span>or use email</span>
-        </div>
         <label>
           Email
           <input
@@ -100,65 +224,83 @@ export function AuthPanel({
             placeholder="you@example.com"
           />
         </label>
-        <label>
-          Password
-          <input
-            name="password"
-            type="password"
-            autoComplete={
-              mode === "login" ? "current-password" : "new-password"
-            }
-            required
-            minLength={mode === "signup" ? 10 : 1}
-            maxLength={mode === "signup" ? 72 : 200}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </label>
+        {mode !== "link" && (
+          <label>
+            Password
+            <input
+              name="password"
+              type="password"
+              autoComplete={
+                mode === "login" ? "current-password" : "new-password"
+              }
+              required
+              minLength={mode === "signup" ? PASSWORD_MIN : 1}
+              maxLength={mode === "signup" ? PASSWORD_MAX : 200}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </label>
+        )}
         {mode === "signup" && (
           <p className="small">
-            Use 10–72 characters with uppercase and lowercase letters, a number
-            and a symbol. Confirm your email before signing in.
+            Use {PASSWORD_MIN} to {PASSWORD_MAX} characters with uppercase and
+            lowercase letters, a number and a symbol. We will email you a link
+            to confirm your address before you sign in.
+          </p>
+        )}
+        {mode === "link" && (
+          <p className="small">
+            No password needed. We will email you a link that signs you in.
           </p>
         )}
         <Button type="submit" busy={busy}>
-          {mode === "login" ? "Sign in" : "Create account"}
+          {mode === "login"
+            ? "Sign in"
+            : mode === "signup"
+              ? "Create account"
+              : "Email me a sign-in link"}
         </Button>
+        {mode !== "link" ? (
+          <button
+            type="button"
+            className="text-button"
+            disabled={busy}
+            onClick={() => switchTo("link")}
+          >
+            Email me a sign-in link instead
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="text-button"
+            disabled={busy}
+            onClick={() => switchTo("login")}
+          >
+            Sign in with a password instead
+          </button>
+        )}
         <button
           type="button"
           className="text-button"
           disabled={busy}
-          onClick={() => {
-            setMode(mode === "login" ? "signup" : "login");
-            setError("");
-            setNotice("");
-          }}
+          onClick={() => switchTo(mode === "signup" ? "login" : "signup")}
         >
-          {mode === "login"
-            ? "New here? Create an account"
-            : "Already have an account? Sign in"}
+          {mode === "signup"
+            ? "Already have an account? Sign in"
+            : "New here? Create an account"}
         </button>
-        <div className="auth-help">
-          <button
-            type="button"
-            className="text-button"
-            disabled={busy}
-            onClick={() => void submit("request_password_reset")}
-          >
-            Forgot password?
-          </button>
-          <button
-            type="button"
-            className="text-button"
-            disabled={busy}
-            onClick={() => void submit("resend_confirmation")}
-          >
-            Resend confirmation
-          </button>
-        </div>
-        <p className="small">
-          Email links must be opened in the same browser that requested them.
-        </p>
+        {mode === "login" && (
+          <div className="auth-help">
+            <button
+              type="button"
+              className="text-button"
+              disabled={busy}
+              onClick={() => void forgot()}
+            >
+              Forgot password?
+            </button>
+          </div>
+        )}
         {notice && (
           <div role="status">
             <Notice>{notice}</Notice>
