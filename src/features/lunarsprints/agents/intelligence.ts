@@ -15,78 +15,38 @@ export interface Intelligence {
   ): Promise<z.infer<T>>;
 }
 
-/** One AI call, recorded after the response for cost and quality review. */
+/**
+ * One AI call, recorded after the response for cost and quality review.
+ * Never holds prompts, user text or answers: only who, which model, how long,
+ * how many tokens and how it ended. Unknown token counts stay null, never 0.
+ */
 export type RunRecord = {
   role: Role;
+  /** The agent that answered, for example "adk:smart_goal.goals". */
   resourceId: string;
+  /** The random request ID shared with the agent service logs. */
   sessionId: string | null;
   turnId: string | null;
   status: "ok" | "error";
   durationMs: number;
   errorCode: string | null;
   metrics: {
-    model: string;
-    contractVersion: string;
-    inputCharacters: number;
-    schemaCharacters: number;
-    outputCharacters: number;
-    firstOutputMs: number | null;
+    engine: "adk_gemini";
+    task: string;
+    model: string | null;
+    latencyMs: number | null;
     inputTokens: number | null;
-    cachedInputTokens: number | null;
     outputTokens: number | null;
-    reasoningTokens: number | null;
-    totalTokens: number | null;
     outcome: string;
-    usageSource:
-      | "stream"
-      | "turn_result"
-      | "turn_lookup"
-      | "provider_response"
-      | "unavailable";
-    /** Which engine produced this run. Older records may name a retired engine. */
-    engine?: string;
-    /** True when the run was a side-by-side comparison, not shown to the user. */
-    shadow?: boolean;
-    provider?: string;
   };
 };
 
+/** Context the route gives an AI engine. The user ID never leaves the app. */
 export type AgentContext = {
   userId: string;
   sprintId: string;
-  sessionModel?: string;
-  contract?: "full" | "compact";
   onRun?: (record: RunRecord) => void;
 };
-
-/** Token counts as any provider reports them. Unknown counts stay null. */
-export type TokenCounts = {
-  inputTokens: number;
-  cachedInputTokens?: number | null;
-  outputTokens: number;
-  reasoningTokens?: number | null;
-  totalTokens: number;
-};
-
-/**
- * Copies reported token counts onto a run record. A missing report leaves
- * every count null, so unknown cost is never recorded as zero cost.
- */
-export function applyUsage(
-  metrics: RunRecord["metrics"],
-  usage: TokenCounts | null,
-  source: RunRecord["metrics"]["usageSource"],
-) {
-  if (!usage) return;
-  Object.assign(metrics, {
-    inputTokens: usage.inputTokens,
-    cachedInputTokens: usage.cachedInputTokens ?? null,
-    outputTokens: usage.outputTokens,
-    reasoningTokens: usage.reasoningTokens ?? null,
-    totalTokens: usage.totalTokens,
-    usageSource: source,
-  });
-}
 
 /** Shown to the user while no AI engine is connected. */
 export const AI_NOT_CONNECTED_MESSAGE =

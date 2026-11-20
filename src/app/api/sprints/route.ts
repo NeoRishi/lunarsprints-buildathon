@@ -15,13 +15,15 @@ import {
   hashes,
   newSprint,
 } from "@/features/lunarsprints/coordinator";
-import { UnavailableIntelligence } from "@/features/lunarsprints/agents/intelligence";
+import type { RunRecord } from "@/features/lunarsprints/agents/intelligence";
+import { selectIntelligence } from "@/features/lunarsprints/agents/gemini-agents";
 import {
   activeSprints,
   commit,
   listSprints,
   loadSprint,
   rateLimit,
+  recordRuns,
   replay,
 } from "@/features/lunarsprints/store";
 export const runtime = "nodejs";
@@ -136,13 +138,20 @@ export async function POST(request: Request) {
         ].includes(command.action)
       )
         await rateLimit(user.id, "ai", 30, 3600);
-      // No AI engine is connected during the platform move. AI actions fail
-      // with a plain message; every other action works without AI.
-      state = await coordinate(
-        existing,
-        command,
-        new UnavailableIntelligence(),
-      );
+      // The agent service answers when AGENTS_SERVICE_URL is set; otherwise AI
+      // actions fail with a plain message. Every other action works without AI.
+      // Runs are recorded even when a call fails; nothing else is saved then.
+      const runs: RunRecord[] = [];
+      const ai = selectIntelligence({
+        userId: user.id,
+        sprintId: command.sprintId,
+        onRun: (r) => runs.push(r),
+      });
+      try {
+        state = await coordinate(existing, command, ai);
+      } finally {
+        await recordRuns(user.id, command.sprintId, runs);
+      }
     }
     const saved = await commit(user.id, command, state, requestHash);
     return NextResponse.json(view(saved), {
