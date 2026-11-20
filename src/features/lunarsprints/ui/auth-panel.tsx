@@ -1,7 +1,6 @@
 "use client";
 import { useRef, useState } from "react";
 import {
-  createUserWithEmailAndPassword,
   sendEmailVerification,
   sendPasswordResetEmail,
   sendSignInLinkToEmail,
@@ -9,6 +8,7 @@ import {
   type User,
 } from "firebase/auth";
 import { clientAuth } from "@/lib/firebase/client";
+import { signUpNeutral } from "@/lib/firebase/flows";
 import { EMAIL_FOR_SIGN_IN_KEY, PASSWORD_MAX, PASSWORD_MIN } from "@/lib/auth";
 import { Button, Notice } from "./shared";
 import { messageFor, startSession } from "./auth-client";
@@ -65,14 +65,15 @@ export function AuthPanel({
         throw new Error(
           `Use ${PASSWORD_MIN} to ${PASSWORD_MAX} characters for your password.`,
         );
-      const auth = await clientAuth();
-      const { user } = await createUserWithEmailAndPassword(
-        auth,
+      const message = await signUpNeutral(
+        await clientAuth(),
         email.trim(),
         password,
+        appUrl,
       );
-      await sendEmailVerification(user, { url: appUrl });
-      await finish(user);
+      setPassword("");
+      setMode("login");
+      setNotice(message);
     });
 
   const signIn = () =>
@@ -244,8 +245,8 @@ export function AuthPanel({
         {mode === "signup" && (
           <p className="small">
             Use {PASSWORD_MIN} to {PASSWORD_MAX} characters with uppercase and
-            lowercase letters, a number and a symbol. We will email you a link
-            to confirm your address before you sign in.
+            lowercase letters, a number and a symbol. Confirm your email before
+            you sign in.
           </p>
         )}
         {mode === "link" && (

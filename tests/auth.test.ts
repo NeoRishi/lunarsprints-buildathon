@@ -18,6 +18,11 @@ describe("sign-in helpers", () => {
     expect(messages.size).toBe(1);
     expect([...messages][0]).toContain("Check your email and password");
   });
+  it("never says an email already has an account when signing up", () => {
+    expect(authErrorMessage("auth/email-already-in-use")).toBe(
+      "If this email can be used, we've sent you the next step.",
+    );
+  });
   it("gives a plain message for every code, including unknown ones", () => {
     for (const code of [
       "auth/too-many-requests",

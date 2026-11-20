@@ -13,6 +13,13 @@ export const SESSION_MAX_AGE_SECONDS = 5 * 24 * 60 * 60;
 /** Browser storage key for the address an email sign-in link was sent to. */
 export const EMAIL_FOR_SIGN_IN_KEY = "lunarsprints.emailForSignIn";
 
+/**
+ * The only message sign-up ever shows on success, whether or not the email
+ * already has an account.
+ */
+export const NEUTRAL_SIGN_UP_MESSAGE =
+  "If this email can be used, we've sent you the next step.";
+
 /** Password rule shown on sign-up. Firebase also enforces its own minimum. */
 export const PASSWORD_MIN = 10;
 export const PASSWORD_MAX = 72;
@@ -29,7 +36,7 @@ export function authErrorMessage(code: string | undefined): string {
     case "auth/invalid-login-credentials":
       return "Could not sign in with these details. Check your email and password, or use Forgot password.";
     case "auth/email-already-in-use":
-      return "This email already has an account. Sign in, or use Forgot password.";
+      return NEUTRAL_SIGN_UP_MESSAGE;
     case "auth/invalid-email":
     case "auth/missing-email":
       return "Enter a valid email address.";
