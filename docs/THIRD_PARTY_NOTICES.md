@@ -1,11 +1,11 @@
 # Third-party notices
 
-Some project guidance in `.claude/` is adapted from the open-source projects below. No code from either project is shipped in the app, and neither project's installer, hooks or scripts are used here. Each adapted file names its source at the top.
+Some project guidance in `.agents/skills/` is adapted from the open-source projects below. No code from either project is shipped in the app, and neither project's installer, hooks or scripts are used here. Each adapted file names its source at the top.
 
 | Project | Version read | What was adapted | Where |
 |---|---|---|---|
-| Hallmark, https://github.com/nutlope/hallmark | v2.0.0, commit `407fa68` | The "Floor" design rules, reworded for the Moonlit tokens and CSS used in this repo | `.claude/skills/ui-quality/SKILL.md` |
-| ECC, https://github.com/affaan-m/ecc | v2.2.3, commit `b38be6a` | The ideas behind the `silent-failure-hunter` and `refactor-cleaner` agents, rewritten for this repo's rules | `.claude/agents/silent-failure-hunter.md`, `.claude/agents/refactor-cleaner.md` |
+| Hallmark, https://github.com/nutlope/hallmark | v2.0.0, commit `407fa68` | The "Floor" design rules, reworded for the Moonlit tokens and CSS used in this repo | `.agents/skills/ui-quality/SKILL.md` |
+| ECC, https://github.com/affaan-m/ecc | v2.2.3, commit `b38be6a` | The ideas behind the `silent-failure-hunter` and `refactor-cleaner` reviewers, rewritten for this repo's rules | `.agents/skills/silent-failure-hunter/SKILL.md`, `.agents/skills/refactor-cleaner/SKILL.md` |
 
 ## Hallmark licence
 

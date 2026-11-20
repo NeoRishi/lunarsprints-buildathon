@@ -1,5 +1,7 @@
 # NeoRishi LifeOS integration
 
+> Status: Supabase LifeOS is still the live database and sign-in until Step 2 of the buildathon migration moves them to Firebase Auth and Cloud SQL. The target stack is in [`GEMINI.md`](../GEMINI.md).
+
 The current local LunarSprints application uses **NeoRishi-LifeOS-Final**, project `jhkoxgyxrihsuhpjqkxc`, in the existing Pro organization. The integration was authorized by the user on October 28, 2026. No application was published or promoted to production.
 
 ## Existing platform reused
@@ -8,13 +10,13 @@ The current local LunarSprints application uses **NeoRishi-LifeOS-Final**, proje
 - Existing Google OAuth configuration, with no new Google client or additional Google data scopes.
 - Existing enabled Resend SMTP configuration (`smtp.resend.com`, port 465), sender and encrypted credentials. The confirmation template uses `{{ .ConfirmationURL }}` and was left unchanged.
 - Existing profile-creation trigger. The new application does not create a second profile system or import profile/health/birth data into agent context.
-- Existing OpenAI project, key and saved agent IDs. The Supabase switch does not create or replace any AI agents.
+- The AI setup of that time was left unchanged. The Supabase switch did not create or replace any AI agents. (That AI setup was later removed in Step 1 of the buildathon migration; see `GEMINI.md`.)
 
 ## Changes made
 
 The two previously tested additive migrations create six isolated `ls_*` tables plus `ls_commit` and `ls_claim_rate`. Both source versions are registered in LifeOS migration history. New tables have RLS; authenticated clients cannot directly insert/update aggregates or call the commit function. The service role appends audit/idempotency history but cannot update/delete/truncate that history.
 
-The app's approved local environment files now hold the existing LifeOS connection values. No keys were printed, created or rotated. A private rollback record contains only the previous Supabase connection; OpenAI credentials were left in their approved files.
+The app's approved local environment files now hold the existing LifeOS connection values. No keys were printed, created or rotated. A private rollback record contains only the previous Supabase connection; AI credentials were left in their approved files.
 
 Only `http://127.0.0.1:3000/auth/callback` was added to the authentication redirect allowlist. The existing 17 entries and `https://www.neorishi.io` site URL remain. Google selection uses PKCE/S256 with an HttpOnly SameSite cookie, validates the returned provider URL, and uses the existing Supabase Google callback. Recovery links continue to use the exact local callback. LifeOS's stronger password rules and 72-byte maximum were retained; test credentials and password guidance were adjusted to comply.
 

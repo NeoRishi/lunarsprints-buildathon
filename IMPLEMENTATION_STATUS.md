@@ -1,13 +1,26 @@
 # LunarSprints implementation checklist
 
+## Buildathon Step 1: clean slate (November 2026)
+
+- [x] Removed all previous AI vendor packages, client code, saved-agent registry, model-selection code and their tests. The `Intelligence` interface now lives in `src/features/lunarsprints/agents/intelligence.ts`.
+- [x] Added `UnavailableIntelligence`: every AI action returns "AI suggestions are being upgraded. Your saved plan is safe." (code `ai_not_connected`, status 503) and nothing is saved. Flows that do not need AI keep working, covered by `tests/ai-unavailable.test.ts`.
+- [x] Kept output schemas (`agents/contract.ts`), policies, clarification outcomes and role prompt summaries for the new agent service.
+- [x] Turned voice input off. The recording header check moved to `src/lib/audio.ts` with tests.
+- [x] Removed the previous hosting config. `next.config.ts` builds a standalone server for Cloud Run; production origin comes only from `APP_ORIGIN`.
+- [x] Replaced the old project guidance with `GEMINI.md` and skills in `.agents/skills/`.
+- [ ] Step 2 onward: Firebase Auth, Cloud SQL, the Python ADK agent service on Gemini, Gemini Live voice, BigQuery, Firebase Cloud Messaging. See `GEMINI.md`.
+
+Everything below is the earlier development record, kept for history. It describes the AI setup and hosting that Step 1 removed.
+
+
 ## Completed and verified
 
 - [x] Extracted the v2 package and verified all supplied SHA-256 checksums.
 - [x] Inspected the actual workspace and the user-confirmed blank Desktop application folder; no existing repository or application code was present there.
-- [x] Inspected all ten saved OpenAI resources, including IDs, instructions, JSON schemas, model/reasoning configuration, tools and delegation settings.
+- [x] Inspected all ten saved resources at the previous AI provider, including IDs, instructions, JSON schemas, model/reasoning configuration, tools and delegation settings.
 - [x] Classified all ten as project-scoped saved Agents API resources; all initially use `gpt-6-astra`, medium reasoning, JSON Schema output, no tools and disabled delegation.
 - [x] Reused existing IDs through supported official sessions; no saved-agent create/update/delete calls were made.
-- [x] Pinned TypeScript, Next.js, Agents SDK, OpenAI, Supabase and validation dependencies with an npm lockfile.
+- [x] Pinned TypeScript, Next.js, the AI provider SDKs, Supabase and validation dependencies with an npm lockfile.
 - [x] Implemented the real planning API and responsive planner.
 - [x] Implemented dynamic zero-to-five clarification, recommendation provenance, custom answers, skips and navigation.
 - [x] Implemented SMART modification/regeneration, exact-version goal approval, story review, schedule approval and activation gates.
@@ -22,7 +35,7 @@
 
 ## Final verification
 
-- [x] Passed the complete browser/STT check: actual MCQs, no preselection, custom overrides, saved navigation/reload, mobile width, microphone consent/denial and actual OpenAI transcription.
+- [x] Passed the complete browser/STT check: actual MCQs, no preselection, custom overrides, saved navigation/reload, mobile width, microphone consent/denial and actual provider transcription.
 - [x] Passed the full persistent competing-goal scenario: two SMART goals, two goal-owned work sets, 180 minutes of effort against 96 usable minutes, blocked unacknowledged overload and recorded risk acknowledgment before activation.
 - [x] Passed actual Agent 08 next-action and Agent 10 reflection controls without silent progress or schedule changes.
 - [x] Final lint, typecheck, 58 tests and optimized build passed; receipt and source fingerprint are in `docs/evidence/final-validation.json`.
@@ -45,7 +58,7 @@ Machine-readable evidence in `docs/evidence/` records the observed results, invo
 | 09 Adaptive Backlog | Saved Agents API | Semantic replanning (`request_replan`, `edit_replan`, `reject_replan`, `approve_replan`) and user-authored date proposals implemented with deterministic before/after diff (scope, dates, dependencies, capacity) and exact-hash approval gate. |
 | 10 Reflection | Saved Agents API | Actual board reflection control and saved resource invocation verified (`sess_0ca05a8bd5882706006ae19171c6088195b01658357b5b886e` in `docs/evidence/execution-guidance.json`); no progress or dates changed. |
 
-Exact actual IDs are in `config/agent-registry.json`; successful invocation IDs are in `docs/evidence/end-to-end.json` and the other evidence JSON files.
+Exact actual IDs were in `config/agent-registry.json` (removed in Step 1); successful invocation IDs are in `docs/evidence/end-to-end.json` and the other evidence JSON files.
 
 ## Engineering choices and limits
 
@@ -68,7 +81,7 @@ Stop the new local application to disable the feature; no legacy app route was r
 
 ## Current access state
 
-OpenAI project access and existing saved resources were verified using the official API. The current backend is NeoRishi-LifeOS-Final; MCP, the authenticated official dashboard and CLI all have access to it. Its existing Google/email identities and Resend SMTP are reused. The earlier Dev-V1 connector mismatch is historical. There is no backend access blocker to the local planning/board flow. The user completes personal Google account selection. No application was deployed publicly.
+AI provider project access and existing saved resources were verified using the official API. The current backend is NeoRishi-LifeOS-Final; MCP, the authenticated official dashboard and CLI all have access to it. Its existing Google/email identities and Resend SMTP are reused. The earlier Dev-V1 connector mismatch is historical. There is no backend access blocker to the local planning/board flow. The user completes personal Google account selection. No application was deployed publicly.
 
 ## Account recovery repair, October 28, 2026
 
@@ -89,7 +102,7 @@ That account-recovery result belongs to the earlier Dev-V1 backend. The subseque
 - [x] Verified existing Google/email providers, confirmed account identity and enabled Resend SMTP.
 - [x] Added the isolated `ls_*` schema with owner RLS, service-only commits and immutable audit history. Registered both source migration versions.
 - [x] Preserved old tables/data, profile trigger, Google credentials, SMTP credentials/templates, site URL and existing 17 redirects. Added only the exact local app callback.
-- [x] Switched both approved local environment files to existing LifeOS keys without rotating or printing any keys. OpenAI credentials/resources remain unchanged.
+- [x] Switched both approved local environment files to existing LifeOS keys without rotating or printing any keys. AI provider credentials/resources remain unchanged.
 - [x] Verified zero real Dev-V1 drafts required transfer; retained five synthetic sprints in the old project.
 - [x] Added Google sign-in with protected PKCE, exact callback and restricted redirect validation.
 - [x] Passed the full real-agent planning/activation/board flow on LifeOS, including actual cross-user isolation.
@@ -110,7 +123,7 @@ The user completes Google account selection/consent. An authorization-gateway te
 - [x] Refined planner and board UX: added client-side stop-waiting control (`AbortController`) for long-running AI calls, server validation message surfacing, overloaded calendar-day indicators, JSON sprint export (`GET /api/sprints?id=...&export=1`), and user-initiated sprint archiving (`DELETE /api/sprints?id=...`) compatible with append-only audit history.
 - [x] Hardened error redaction (`redactSensitive` in `src/lib/http.ts` and `src/features/lunarsprints/agents/managed.ts`), disabled-agent runtime enforcement (`agent_disabled`), expanded clarification evaluation scenarios (`scripts/evaluate-clarification.ts`), and documented the pre-deployment public-release hardening plan in `docs/PUBLIC_RELEASE_HARDENING.md`.
 
-## Codex verification of the Argon release, October 31, 2026
+## Independent verification of the Argon release, October 31, 2026
 
 - [x] Unpacked the release without deleting local secrets or dependencies; platform configuration, all ten resource IDs/fingerprints, dependency lock and both applied migrations are unchanged.
 - [x] Fixed the invalid `entry.enabled` runtime check, React effect/ref lint failures, and preserved completed task contents/story identity/allocation during replanning.
