@@ -16,7 +16,7 @@ import {
   clarificationOutcome,
 } from "../src/features/lunarsprints/agents/outcomes";
 import type { Role } from "../src/features/lunarsprints/contracts";
-import type { Intelligence } from "../src/features/lunarsprints/agents/managed";
+import type { Intelligence } from "../src/features/lunarsprints/agents/intelligence";
 import { sprint, story } from "./fixtures";
 import {
   planningResponseSchema,

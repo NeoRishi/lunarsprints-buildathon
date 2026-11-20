@@ -1,7 +1,7 @@
 import { adminClient } from "@/lib/supabase/server";
 import type { Command, Sprint } from "./contracts";
 import { AppError } from "./domain";
-import type { RunRecord } from "./agents/managed";
+import type { RunRecord } from "./agents/intelligence";
 export async function replay(
   userId: string,
   key: string,

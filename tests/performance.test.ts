@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { coordinate, hash } from "../src/features/lunarsprints/coordinator";
 import { approvalPayload } from "../src/features/lunarsprints/domain";
 import type { Command, Sprint } from "../src/features/lunarsprints/contracts";
-import type { Intelligence } from "../src/features/lunarsprints/agents/managed";
+import type { Intelligence } from "../src/features/lunarsprints/agents/intelligence";
 import { sprint, story } from "./fixtures";
 const cmd = (
   s: Sprint,

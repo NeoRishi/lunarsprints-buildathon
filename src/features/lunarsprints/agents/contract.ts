@@ -1,5 +1,4 @@
 import { z } from "zod";
-import registry from "../../../../config/agent-registry.json";
 import {
   clarificationSchema,
   clarificationResponseSchema,
@@ -12,9 +11,9 @@ import { AppError, assert } from "../domain";
 import { NeedsClarification, clarificationOutcome } from "./outcomes";
 
 /**
- * The output contract every agent engine must honour. Both the saved OpenAI
- * agents and the LangGraph engine build their schemas and accept answers
- * through these functions, so the rest of the app sees identical results.
+ * The output contract every agent engine must honour. Any engine builds its
+ * schema and accepts answers through these functions, so the rest of the app
+ * sees identical results whichever model produced them.
  */
 export type AgentContract = ReturnType<typeof agentContract>;
 
@@ -86,21 +85,6 @@ export function acceptAgentOutput<T extends z.ZodType>(
       422,
     );
   return schema.parse(output.payload);
-}
-
-/** The OpenAI model each role uses today. An empty variable counts as unset. */
-export function openAIModelFor(
-  role: Role,
-  env: Record<string, string | undefined> = process.env,
-) {
-  const entry = registry[role];
-  return (
-    (role === "smart_goal"
-      ? env.OPENAI_SMART_MODEL || undefined
-      : role === "story_decomposer"
-        ? env.OPENAI_STORY_MODEL || "gpt-6.1-sol"
-        : undefined) ?? entry.model
-  );
 }
 
 /** Long multi-goal and breakdown calls get 180 seconds, everything else 90. */
