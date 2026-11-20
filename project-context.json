@@ -1,0 +1,154 @@
+{
+  "project": "LunarSprints (NeoRishi Sprints)",
+  "owner": {
+    "name": "Hrishikesh",
+    "company": "NeoRishi Wellness (OPC) Private Limited, Pune 411014",
+    "gitIdentity": "NeoRishi <hrishikesh.wattamwar@gmail.com>"
+  },
+  "repo": {
+    "github": "NeoRishi/lunar-sprints",
+    "defaultBranch": "main",
+    "localPath": "~/Desktop/LunarSprints",
+    "mergeDeploysToProduction": true
+  },
+  "stack": {
+    "framework": "Next.js App Router",
+    "language": "TypeScript",
+    "styling": "Plain CSS with Moonlit tokens in src/app/globals.css plus CSS modules (no Tailwind)",
+    "auth_db": "Supabase via @supabase/ssr",
+    "tests": ["Vitest", "Playwright"],
+    "packageManager": "npm",
+    "validation": "Zod",
+    "node": ">=22 <25"
+  },
+  "infrastructure": {
+    "vercel": {
+      "team": "neorishis-projects",
+      "project": "lunar-sprints",
+      "region": "Tokyo",
+      "productionUrl": "https://sprints.neorishi.io"
+    },
+    "supabase": {
+      "project": "NeoRishi LifeOS",
+      "ref": "jhkoxgyxrihsuhpjqkxc",
+      "region": "Tokyo",
+      "shared": true,
+      "rule": "Do not create a new project. Additive migrations only. Touch only LunarSprints tables. Preserve RLS.",
+      "configName": "NeoRishi-LifeOS-Final",
+      "tablePrefix": "ls_"
+    },
+    "email": "Resend",
+    "dns": "Hostinger (neorishi.io)"
+  },
+  "envVarNames": [
+    "NEXT_PUBLIC_SUPABASE_URL",
+    "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+    "SUPABASE_SECRET_KEY",
+    "OPENAI_API_KEY",
+    "OPENAI_PROJECT_ID",
+    "OPENAI_SMART_MODEL",
+    "APP_ORIGIN"
+  ],
+  "ai": {
+    "current": {
+      "provider": "OpenAI",
+      "openaiProject": "proj_vI5AtNhbZISblXntDQZHNhZ1",
+      "savedAgents": 10,
+      "model": "gpt-6-astra",
+      "reasoning": "medium",
+      "registryFile": "config/agent-registry.json",
+      "promptReferenceDir": "src/features/lunarsprints/agents/prompts/",
+      "runtimeCheck": "src/features/lunarsprints/agents/managed.ts + registry-check.ts (rejects instruction-hash mismatch)",
+      "agent05Hash": "6eb8815ed6852abdcf9fb9a548bda86c9cbbec0c5451429080afb6abecd24357",
+      "promptReferenceNote": "prompts/*.md are short summaries, not the full saved instructions",
+      "rolesInvoked": [
+        "smart_goal",
+        "intent_alignment",
+        "story_decomposer",
+        "scheduling",
+        "adaptive_backlog",
+        "daily_execution",
+        "reflection"
+      ],
+      "rolesNotInvoked": {
+        "orchestrator": "never called",
+        "capacity": "never called",
+        "rhythm": "disabled"
+      },
+      "storyModel": "OPENAI_STORY_MODEL, default gpt-6.1-sol"
+    },
+    "target": {
+      "orchestrator": "LangGraph",
+      "modelLayer": "LangChain model wrappers (langchain-openai now, swappable to Anthropic later)",
+      "mustHave": "A public, authenticated HTTP API that runs the agent workflows",
+      "avoid": [
+        "OpenAI Agents SDK lock-in",
+        "CrewAI",
+        "LangChain as the orchestrator"
+      ],
+      "billing": "Use OpenAI API credits for model calls",
+      "decisions": {
+        "runtime": "LangGraph.js inside Next.js API routes on Vercel",
+        "state": "Shared LifeOS Supabase, new additive ls_ tables with RLS and a custom checkpointer",
+        "auth": "Supabase JWT first, hashed scoped API keys in a later PR",
+        "urls": "/api/v1/agents/{role}/runs, /api/v1/workflows/{name}/runs, /api/v1/runs/{id}, /api/v1/runs/{id}/resume, /api/v1/openapi.json"
+      }
+    }
+  },
+  "productDecisions": {
+    "sprintLengthDays": {
+      "min": 3,
+      "max": 45
+    },
+    "recommendedPreset": "Paksha sprint: Pratipada to Purnima or Amavasya",
+    "freeTier": "1 active sprint of 3 to 15 days (config/plans.json)",
+    "payments": "On hold. LunarSprints+ Rs 299/month shown as coming soon.",
+    "login": "One universal NeoRishi login, open signup",
+    "reminders": "Email via Resend",
+    "visualDirection": "Moonlit: dark night ground, moonlight text, one soft gold accent, thin serif headlines, minimal",
+    "plainLanguage": {
+      "avoidOnScreen": [
+        "SMART",
+        "Definition of Done",
+        "agent names",
+        "semantic replan"
+      ],
+      "use": ["Done means", "milestones", "steps", "Adjust the plan"]
+    },
+    "plusTier": "Coming soon: up to 3 active sprints of up to 45 days (config/plans.json)"
+  },
+  "invariants": [
+    "Deterministic core works with no LLM call",
+    "Never silently rebuild today's plan; plan revisions are immutable",
+    "Reality before lunar context; no fake lunar data in production",
+    "Preserve RLS; no service-role shortcuts in user paths",
+    "Server-authoritative identity and dates",
+    "Additive migrations only",
+    "No secrets in code, chat, logs or commits"
+  ],
+  "workingRules": [
+    "Branch, PR, stop. Owner merges.",
+    "No reset, force push, branch deletion, history rewrite or squash",
+    "lint, typecheck, vitest and build must pass before every PR",
+    "Ask before live DB changes, DNS, Vercel settings or deleting files",
+    "Never create, edit or delete saved OpenAI agents; write a Codex prompt for the owner instead",
+    "Stop at the requested phase and report"
+  ],
+  "communication": [
+    "Plain language first",
+    "Clarifying multiple-choice questions with a recommended answer before big work",
+    "No em-dashes anywhere",
+    "Flag fake testimonials or unverifiable claims"
+  ],
+  "externalRepos": {
+    "ecc": "https://github.com/affaan-m/ecc",
+    "hallmark": "https://github.com/nutlope/hallmark",
+    "goal": "Remove AI-slop from the product: UI, copy and code quality"
+  },
+  "quality": {
+    "uiGuide": ".claude/skills/ui-quality/SKILL.md",
+    "copyGuide": ".claude/skills/copy-quality/SKILL.md",
+    "copyGuardTest": "tests/copy-guard.test.ts",
+    "notices": "docs/THIRD_PARTY_NOTICES.md"
+  }
+}

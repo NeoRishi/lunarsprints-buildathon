@@ -1,0 +1,11 @@
+{
+  "$comment": "Plan limits enforced by the server today. AI, voice and replan monthly allowances are added with the usage ledger in the payments phase. Every user is on 'free' until paid entitlements exist; LUNARSPRINTS_PLUS_USER_IDS can grant 'plus' to listed user ids.",
+  "free": {
+    "maxActiveSprints": 1,
+    "maxSprintDays": 15
+  },
+  "plus": {
+    "maxActiveSprints": 3,
+    "maxSprintDays": 45
+  }
+}

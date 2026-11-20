@@ -1,0 +1,222 @@
+{
+  "orchestrator": {
+    "resourceType": "agents_api_saved",
+    "id": "agent_3fde2349e9aa4120a98093c192a2f7dc81a8d55949eb4c77a3",
+    "name": "01 \u2014 Ask NeoRishi (Orchestrator)",
+    "model": "gpt-6-astra",
+    "instructionsSha256": "694071f3ec157f1033ef9bd3cb79f1abc439f0c0d2c8bd45a672790d0034d019",
+    "tools": [],
+    "phase": 1,
+    "reasoning": {
+      "effort": "medium",
+      "summary": "auto"
+    },
+    "multiAgent": {
+      "enabled": false,
+      "max_concurrent_subagents": null
+    },
+    "outputFormat": {
+      "type": "json_schema",
+      "name": null,
+      "schemaVersion": "1.0"
+    }
+  },
+  "intent_alignment": {
+    "resourceType": "agents_api_saved",
+    "id": "agent_d5e649f54625407d896f685bc4dab73cb3bb7c8b65974bfab5",
+    "name": "02 \u2014 Intent & Life Alignment",
+    "model": "gpt-6-astra",
+    "instructionsSha256": "49cc0a502c659eb4f45ccc5ace345a0a0c32d4c5c3a7d543fea4ec5889f7ff3d",
+    "tools": [],
+    "phase": 1,
+    "reasoning": {
+      "effort": "medium",
+      "summary": "auto"
+    },
+    "multiAgent": {
+      "enabled": false,
+      "max_concurrent_subagents": null
+    },
+    "outputFormat": {
+      "type": "json_schema",
+      "name": null,
+      "schemaVersion": "1.0"
+    }
+  },
+  "smart_goal": {
+    "resourceType": "agents_api_saved",
+    "id": "agent_0b8fee8e2182476fa7d061aa656dac62bda6e1dcbc5d41f7bd",
+    "name": "03 \u2014 SMART Goal Architect",
+    "model": "gpt-6-astra",
+    "instructionsSha256": "6633d50896010f0db0d11f379521b68a100a38f9f5238c076d2dc3a0c64164ce",
+    "tools": [],
+    "phase": 1,
+    "reasoning": {
+      "effort": "medium",
+      "summary": "auto"
+    },
+    "multiAgent": {
+      "enabled": false,
+      "max_concurrent_subagents": null
+    },
+    "outputFormat": {
+      "type": "json_schema",
+      "name": null,
+      "schemaVersion": "1.0"
+    }
+  },
+  "capacity": {
+    "resourceType": "agents_api_saved",
+    "id": "agent_e50f02564ea8430d9c963762c9366eb98d55dd82482249db86",
+    "name": "04 \u2014 Reality & Capacity Intelligence",
+    "model": "gpt-6-astra",
+    "instructionsSha256": "7d817c718520d83452afcde09f4899055826fb0dceb1f406d02789966dd24ba5",
+    "tools": [],
+    "phase": 1,
+    "reasoning": {
+      "effort": "medium",
+      "summary": "auto"
+    },
+    "multiAgent": {
+      "enabled": false,
+      "max_concurrent_subagents": null
+    },
+    "outputFormat": {
+      "type": "json_schema",
+      "name": null,
+      "schemaVersion": "1.0"
+    }
+  },
+  "story_decomposer": {
+    "resourceType": "agents_api_saved",
+    "id": "agent_1c723420dbe34b45bfd75c44137b66168edb264c67c24c10bc",
+    "name": "05 \u2014 Story & Work Decomposition",
+    "model": "gpt-6-astra",
+    "instructionsSha256": "6eb8815ed6852abdcf9fb9a548bda86c9cbbec0c5451429080afb6abecd24357",
+    "tools": [],
+    "phase": 1,
+    "reasoning": {
+      "effort": "medium",
+      "summary": "auto"
+    },
+    "multiAgent": {
+      "enabled": false,
+      "max_concurrent_subagents": null
+    },
+    "outputFormat": {
+      "type": "json_schema",
+      "name": null,
+      "schemaVersion": "1.0"
+    }
+  },
+  "rhythm": {
+    "resourceType": "agents_api_saved",
+    "id": "agent_a62e0072639943a7b1349b1532816b89d250fd1ff53845938c",
+    "name": "06 \u2014 \u1e5ata & Rhythm Intelligence",
+    "model": "gpt-6-astra",
+    "instructionsSha256": "c59f35a6eef82bd43387568ebdffe916d84b69c66fc196a35c730edc0188664b",
+    "tools": [],
+    "phase": 3,
+    "reasoning": {
+      "effort": "medium",
+      "summary": "auto"
+    },
+    "multiAgent": {
+      "enabled": false,
+      "max_concurrent_subagents": null
+    },
+    "outputFormat": {
+      "type": "json_schema",
+      "name": null,
+      "schemaVersion": "1.0"
+    }
+  },
+  "scheduling": {
+    "resourceType": "agents_api_saved",
+    "id": "agent_b6e91872388642e59e7d5851721bd02c70eec3c0ea1847929f",
+    "name": "07 \u2014 Intelligent Scheduling & Focus",
+    "model": "gpt-6-astra",
+    "instructionsSha256": "87805464df7f917b40d3890fb49f5f3bce05076af881af9b8cbcf51e7ead2e21",
+    "tools": [],
+    "phase": 1,
+    "reasoning": {
+      "effort": "medium",
+      "summary": "auto"
+    },
+    "multiAgent": {
+      "enabled": false,
+      "max_concurrent_subagents": null
+    },
+    "outputFormat": {
+      "type": "json_schema",
+      "name": null,
+      "schemaVersion": "1.0"
+    }
+  },
+  "daily_execution": {
+    "resourceType": "agents_api_saved",
+    "id": "agent_584bec56b0384cca97aadf0dad5dc5327606c729f53449ccb8",
+    "name": "08 \u2014 Daily Execution & Momentum",
+    "model": "gpt-6-astra",
+    "instructionsSha256": "749fce94fae68ce6d152a3165fb5bd033fc34a6d3990248924069c3519c9ca22",
+    "tools": [],
+    "phase": 2,
+    "reasoning": {
+      "effort": "medium",
+      "summary": "auto"
+    },
+    "multiAgent": {
+      "enabled": false,
+      "max_concurrent_subagents": null
+    },
+    "outputFormat": {
+      "type": "json_schema",
+      "name": null,
+      "schemaVersion": "1.0"
+    }
+  },
+  "adaptive_backlog": {
+    "resourceType": "agents_api_saved",
+    "id": "agent_3019f5aff3784a4bb0eb2d8eaf1a9811a540bb67f94e4a07a0",
+    "name": "09 \u2014 Adaptive Planning & Backlog",
+    "model": "gpt-6-astra",
+    "instructionsSha256": "54e512dd4b40b8106889e14b3543daa819aea9cba26aa20fbe12d8d3dcfa0681",
+    "tools": [],
+    "phase": 2,
+    "reasoning": {
+      "effort": "medium",
+      "summary": "auto"
+    },
+    "multiAgent": {
+      "enabled": false,
+      "max_concurrent_subagents": null
+    },
+    "outputFormat": {
+      "type": "json_schema",
+      "name": null,
+      "schemaVersion": "1.0"
+    }
+  },
+  "reflection": {
+    "resourceType": "agents_api_saved",
+    "id": "agent_159e3d8163d340cba825d77cc29fe99fcae87a48fe464a77b1",
+    "name": "10 \u2014 Reflection & Personal Learning",
+    "model": "gpt-6-astra",
+    "instructionsSha256": "98899adda2d4a0c16a250ce36704cf1e043e971207177c03029a84b9d08baf1f",
+    "tools": [],
+    "phase": 2,
+    "reasoning": {
+      "effort": "medium",
+      "summary": "auto"
+    },
+    "multiAgent": {
+      "enabled": false,
+      "max_concurrent_subagents": null
+    },
+    "outputFormat": {
+      "type": "json_schema",
+      "name": null,
+      "schemaVersion": "1.0"
+    }
+  }
+}
