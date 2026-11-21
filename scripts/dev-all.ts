@@ -23,13 +23,19 @@ function start(name: string, command: string, args: string[], cwd?: string) {
   child.stderr?.on("data", (c: Buffer) => process.stderr.write(prefix(c)));
   child.on("exit", (code) => {
     console.log(`[${name}] stopped (${code ?? "signal"})`);
+    // If only the agent service stops, keep the app running: AI actions then
+    // show the honest "didn't come through" message. Restart it with
+    // npm run agents:dev. If the app stops, stop everything.
+    if (name === "agents" && !stopping) return;
     stop();
     process.exit(code ?? 0);
   });
   children.push(child);
 }
 
+let stopping = false;
 function stop() {
+  stopping = true;
   for (const child of children) if (!child.killed) child.kill("SIGTERM");
 }
 process.on("SIGINT", stop);
