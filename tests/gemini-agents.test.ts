@@ -9,6 +9,7 @@ import {
 } from "../src/features/lunarsprints/agents/gemini-agents";
 import {
   UnavailableIntelligence,
+  type Intelligence,
   type RunRecord,
 } from "../src/features/lunarsprints/agents/intelligence";
 import { scheduleNotesSchema } from "../src/features/lunarsprints/agents/contract";
@@ -350,5 +351,61 @@ describe("engine selection", () => {
     expect(await agentServiceAnswers({}, up)).toBeNull();
     expect(await agentServiceAnswers(env, up)).toBe(true);
     expect(await agentServiceAnswers(env, down)).toBe(false);
+  });
+});
+
+describe("AI proposals that fail the app's own checks", () => {
+  it("show the plain message and save nothing", async () => {
+    const badSums: Intelligence = {
+      async invoke(role, schema) {
+        if (role === "smart_goal")
+          return schema.parse({
+            status: "ready",
+            mode: "delivery",
+            scopeSummary: "Two pages.",
+            rationale: "Scope is clear.",
+            evidenceRefs: ["intention"],
+            clarification: null,
+          });
+        const broken = structuredClone(story);
+        broken.tasks[0].subtasks[0].minutes = 5;
+        return schema.parse({
+          stories: [broken],
+          uncoveredCriteria: [],
+          warnings: [],
+        });
+      },
+    };
+    let s = sprint();
+    s = await coordinate(
+      s,
+      {
+        sprintId: s.id,
+        expectedRevision: s.revision,
+        idempotencyKey: crypto.randomUUID(),
+        action: "approve_goals",
+        data: {},
+        hash: hashes(s).goals,
+      },
+      badSums,
+    );
+    const before = structuredClone(s);
+    await expect(
+      coordinate(
+        s,
+        {
+          sprintId: s.id,
+          expectedRevision: s.revision,
+          idempotencyKey: crypto.randomUUID(),
+          action: "generate_stories",
+          data: {},
+        },
+        badSums,
+      ),
+    ).rejects.toMatchObject({
+      code: "invalid_ai_output",
+      message: AI_MESSAGES.invalid_ai_output.message,
+    });
+    expect(s).toEqual(before);
   });
 });

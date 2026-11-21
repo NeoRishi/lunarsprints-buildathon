@@ -1,5 +1,6 @@
 import type { z } from "zod";
 import type { Role } from "../contracts";
+import type { ServiceErrorCode } from "./contract";
 import { AppError } from "../domain";
 
 /**
@@ -47,6 +48,64 @@ export type AgentContext = {
   sprintId: string;
   onRun?: (record: RunRecord) => void;
 };
+
+/** Plain messages for each way an AI call can fail. The saved plan never changes. */
+export const AI_MESSAGES = {
+  ai_timeout: {
+    status: 504,
+    message:
+      "AI suggestions took too long this time. Your saved plan is safe. Try again.",
+  },
+  ai_unavailable: {
+    status: 503,
+    message:
+      "AI suggestions didn't come through this time. Your saved plan is safe. Try again.",
+  },
+  invalid_ai_output: {
+    status: 502,
+    message:
+      "The AI suggestion didn't pass our checks, so nothing was changed. Your saved plan is safe. Try again.",
+  },
+  unauthorized: {
+    status: 503,
+    message:
+      "AI suggestions aren't available right now. Your saved plan is safe. Try again later.",
+  },
+  invalid_request: {
+    status: 503,
+    message:
+      "AI suggestions didn't come through this time. Your saved plan is safe. Try again.",
+  },
+} as const satisfies Record<
+  ServiceErrorCode,
+  { status: number; message: string }
+>;
+
+export function aiError(code: ServiceErrorCode) {
+  return new AppError(
+    code,
+    AI_MESSAGES[code].message,
+    AI_MESSAGES[code].status,
+  );
+}
+
+/**
+ * Runs one of the app's own checks on an AI proposal. A proposal that fails
+ * is rejected with the plain message; nothing is saved. Edits the person
+ * types keep the specific message from the check instead.
+ */
+export function checkAiProposal(check: () => void) {
+  try {
+    check();
+  } catch (error) {
+    if (
+      error instanceof AppError &&
+      (error.code === "invalid_input" || error.code === "invalid_model_output")
+    )
+      throw aiError("invalid_ai_output");
+    throw error;
+  }
+}
 
 /** Shown to the user while no AI engine is connected. */
 export const AI_NOT_CONNECTED_MESSAGE =

@@ -9,57 +9,17 @@ import {
   serviceRequestSchema,
   serviceTaskFor,
   serviceUsageSchema,
-  type ServiceErrorCode,
   type ServiceRole,
 } from "./contract";
 import {
   AI_NOT_CONNECTED_MESSAGE,
+  aiError,
   UnavailableIntelligence,
   type AgentContext,
   type Intelligence,
   type RunRecord,
 } from "./intelligence";
 import { NeedsClarification } from "./outcomes";
-
-/** Plain messages for each way an AI call can fail. The saved plan never changes. */
-export const AI_MESSAGES = {
-  ai_timeout: {
-    status: 504,
-    message:
-      "AI suggestions took too long this time. Your saved plan is safe. Try again.",
-  },
-  ai_unavailable: {
-    status: 503,
-    message:
-      "AI suggestions didn't come through this time. Your saved plan is safe. Try again.",
-  },
-  invalid_ai_output: {
-    status: 502,
-    message:
-      "The AI suggestion didn't pass our checks, so nothing was changed. Your saved plan is safe. Try again.",
-  },
-  unauthorized: {
-    status: 503,
-    message:
-      "AI suggestions aren't available right now. Your saved plan is safe. Try again later.",
-  },
-  invalid_request: {
-    status: 503,
-    message:
-      "AI suggestions didn't come through this time. Your saved plan is safe. Try again.",
-  },
-} as const satisfies Record<
-  ServiceErrorCode,
-  { status: number; message: string }
->;
-
-export function aiError(code: ServiceErrorCode) {
-  return new AppError(
-    code,
-    AI_MESSAGES[code].message,
-    AI_MESSAGES[code].status,
-  );
-}
 
 /** The service answers within 45 seconds; this leaves room for the network. */
 const CLIENT_TIMEOUT_MS = 50_000;
@@ -240,3 +200,5 @@ export async function agentServiceAnswers(
     return false;
   }
 }
+
+export { AI_MESSAGES, aiError } from "./intelligence";
