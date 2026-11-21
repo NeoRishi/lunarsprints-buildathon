@@ -4,5 +4,11 @@ import nextTs from "eslint-config-next/typescript";
 export default defineConfig([
   ...nextVitals,
   ...nextTs,
-  globalIgnores([".next/**", "docs/evidence/**", "config/*.private.json"]),
+  globalIgnores([
+    ".next/**",
+    "docs/evidence/**",
+    "config/*.private.json",
+    "agents-service/**",
+    ".private/**",
+  ]),
 ]);

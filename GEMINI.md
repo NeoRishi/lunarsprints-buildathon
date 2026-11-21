@@ -23,7 +23,8 @@ LunarSprints is a Daily Clarity Engine. It answers one question: "Given my goals
 | Database | Local PostgreSQL 16 for now (`lunarsprints_dev`, `lunarsprints_test`). Cloud SQL for PostgreSQL arrives in Step 2B. LunarSprints tables use the `ls_` prefix. |
 | Hosting | Cloud Run in Step 2B. Nothing runs on Google Cloud yet and no billing is turned on. |
 | DNS | Hostinger, for neorishi.io |
-| AI | Not connected during the migration. See "Migration status". |
+| AI | Python agent service in `agents-service/` (Google ADK on Gemini), local on 127.0.0.1:8080. Gemini runs through a Google AI Studio key on the free tier; no paid Google Cloud resources. Four planning roles are connected; the rest show "being upgraded". |
+| Original agent instructions | Git-ignored `.private/agent-instructions/` on the owner's Mac only (fetched from the old saved agents in Step 3). Never commit them. |
 
 ## Stack (current code)
 
@@ -31,8 +32,9 @@ Next.js App Router (v16, see `AGENTS.md`), TypeScript, plain CSS with Moonlit de
 
 * Sign-in: the browser signs in with Firebase, then `POST /api/auth/session` checks the ID token and sets a five-day httpOnly `__session` cookie. Every signed-in route calls `authenticated()` in `src/lib/session.ts`. Accounts with an unconfirmed email never get a session.
 * Database: `src/lib/db.ts` holds one pool built from `DATABASE_URL`, connected as `ls_app`. Every user query runs inside `withUser(userId, fn)`, which sets `app.user_id` for Row Level Security. Migrations live in `db/migrations/` and run with `npm run db:migrate` as `ls_owner`.
+* Agent service: Python 3.12+, uv, Google ADK, FastAPI, Pydantic, Gemini (`agents-service/`). See "Agent service" below.
 
-Environment variables (names only, never print values): `NEXT_PUBLIC_FIREBASE_API_KEY`, `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`, `NEXT_PUBLIC_FIREBASE_PROJECT_ID`, `NEXT_PUBLIC_FIREBASE_APP_ID`, `NEXT_PUBLIC_USE_AUTH_EMULATOR`, `FIREBASE_PROJECT_ID`, `FIREBASE_AUTH_EMULATOR_HOST`, `DATABASE_URL`, `DATABASE_URL_OWNER`, `DATABASE_URL_TEST`, `APP_ORIGIN=https://sprints.neorishi.io`, `DEPLOYMENT_VERSION`. In production the app's public address comes only from `APP_ORIGIN`.
+Environment variables (names only, never print values): `NEXT_PUBLIC_FIREBASE_API_KEY`, `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`, `NEXT_PUBLIC_FIREBASE_PROJECT_ID`, `NEXT_PUBLIC_FIREBASE_APP_ID`, `NEXT_PUBLIC_USE_AUTH_EMULATOR`, `FIREBASE_PROJECT_ID`, `FIREBASE_AUTH_EMULATOR_HOST`, `DATABASE_URL`, `DATABASE_URL_OWNER`, `DATABASE_URL_TEST`, `APP_ORIGIN=https://sprints.neorishi.io`, `DEPLOYMENT_VERSION`, `GOOGLE_API_KEY`, `GOOGLE_GENAI_USE_VERTEXAI` (false for now), `GEMINI_MODEL_DEFAULT`, `GEMINI_MODEL_INTENT_ALIGNMENT`, `GEMINI_MODEL_SMART_GOAL`, `GEMINI_MODEL_STORY_DECOMPOSER`, `GEMINI_MODEL_SCHEDULING`, `AGENTS_SERVICE_URL`, `AGENTS_SERVICE_TOKEN`, `AGENTS_TIMEOUT_SECONDS` (optional, default 45). In production the app's public address comes only from `APP_ORIGIN`.
 
 ## Target stack (buildathon)
 
@@ -49,16 +51,29 @@ Environment variables (names only, never print values): `NEXT_PUBLIC_FIREBASE_AP
 
 * **Step 1 (clean slate): done.** All previous AI vendor code, the old hosting config and voice transcription are removed. AI actions return the plain message "AI suggestions are being upgraded. Your saved plan is safe." (code `ai_not_connected`, status 503). Every flow that does not need AI still works.
 * **Step 2A (local foundation): done.** Sign-in moved to Firebase Authentication (email and password with required email confirmation, and email sign-in links). The database moved to plain PostgreSQL with Row Level Security forced on every `ls_` table, running locally on this Mac with the Auth emulator, at no cost.
-* **Step 2B (next):** Cloud SQL, Cloud Run, Secret Manager and real Firebase sign-in emails. Not started.
-* Steps 3 to 7 are not started. Do only the step you are asked to do.
+* **Step 2B:** Cloud SQL, Cloud Run, Secret Manager and real Firebase sign-in emails. Not started.
+* **Step 3, Run 1 (ADK planning agents): done on branch `feat/step3a-adk-planning-agents`.** intent_alignment, smart_goal, story_decomposer and scheduling run on Gemini through the local agent service. intent_alignment was pulled into Run 1 because every planning flow starts with it.
+* **Step 3, Run 2 (next):** daily_execution, adaptive_backlog and reflection. They still return "AI suggestions are being upgraded. Your saved plan is safe."
+* Steps 4 to 7 are not started. Do only the step you are asked to do.
 
 ## How AI fits in
 
-* All AI calls go through the `Intelligence` interface in `src/features/lunarsprints/agents/intelligence.ts`. The coordinator and tests depend only on that interface.
-* `UnavailableIntelligence` in the same file is the temporary engine. It is the only engine wired in today (`src/app/api/sprints/route.ts`).
-* Kept for the new agent service: output schemas and validation in `agents/contract.ts`, instruction text in `agents/policies.ts`, clarification handling in `agents/outcomes.ts`, and role summaries in `agents/prompts/`. The prompt files are short summaries, not full instructions.
-* Roles used by the app: smart_goal, intent_alignment, story_decomposer, scheduling, adaptive_backlog, daily_execution, reflection. `orchestrator` and `capacity` are never invoked; `rhythm` is disabled.
+* All AI calls go through the `Intelligence` interface in `src/features/lunarsprints/agents/intelligence.ts`. The coordinator and tests depend only on it.
+* `selectIntelligence` in `agents/gemini-agents.ts` picks the engine: `GeminiAgentsIntelligence` when `AGENTS_SERVICE_URL` is set, otherwise `UnavailableIntelligence`. `/health` reports which one is active and whether the agent service answers.
+* Deterministic core decides; AI only proposes. Every answer is checked with the zod contract in `agents/contract.ts` (and then the coordinator's own checks) before anything is saved. A failed, slow or invalid call shows a plain message, saves nothing and is never retried automatically.
+* Every call is recorded through `recordRuns` in `ls_agent_runs`: role, task, model, latency, token counts (null when unknown) and outcome. Never prompts, user text or answers.
 * `src/lib/audio.ts` keeps the recording header check for the voice feature that returns later.
+
+## Agent service (`agents-service/`)
+
+* One ADK `LlmAgent` per role task, each with `output_schema`, in `lunarsprints_agents/agents/<role>.py`. Models come only from env (`GEMINI_MODEL_<ROLE>`, then `GEMINI_MODEL_DEFAULT`).
+* Connected roles and tasks: intent_alignment (assess), smart_goal (clarify, goals, readiness), story_decomposer (stories), scheduling (schedule_notes). Roles are called one at a time; no SequentialAgent yet (see `docs/architecture/agents.md`).
+* One contract for both languages: zod schemas in `agents/contract.ts` are written to `contracts/schemas/*.json` by `npm run contracts:build`. Python builds its Pydantic models from those files. `npm test` and CI fail if the files are stale.
+* API: `POST /v1/roles/{role}` returns `{ result, usage: { model, input_tokens, output_tokens, latency_ms } }`; `GET /healthz`. Every `/v1` call needs `X-Service-Token` (constant-time compare). Step 2B swaps this one check for Cloud Run IAM.
+* Errors: `ai_timeout`, `ai_unavailable`, `invalid_ai_output`, `unauthorized`, `invalid_request`, with no internal detail. Timeout 45 s per call. ADK and google-genai logs are silenced because they can quote model answers; the service logs metadata only.
+* Sessions: `InMemorySessionService`, one per call, deleted afterwards. The web app holds all conversation state, including follow-up questions, so no database session is needed. The service never touches `ls_` tables.
+* Instructions: `lunarsprints_agents/instructions/<role>.md` (public), adapted from the original saved agents. The originals live only in the git-ignored `.private/agent-instructions/`.
+* Commands: `npm run dev:all` (emulator, agent service and app), `npm run agents:check` (ruff, mypy, pytest), `npm run eval:agents` (live evals, uses the key, not in CI), `npm run test:ai-planning` (live end to end with `dev:all` running).
 
 ## Product decisions already taken
 

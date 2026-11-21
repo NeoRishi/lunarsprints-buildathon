@@ -1,12 +1,18 @@
 import { NextResponse } from "next/server";
 import { withoutUser } from "@/lib/db";
 import { firebaseAdminConfigured } from "@/lib/firebase/admin";
+import {
+  activeEngine,
+  agentServiceAnswers,
+} from "@/features/lunarsprints/agents/gemini-agents";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-// Public liveness check. It reveals no project identifiers or provider setup:
-// only whether the database answers (as ls_app) and sign-in is configured.
+// Public liveness check. It reveals no project identifiers, addresses or keys:
+// only whether the database answers (as ls_app), sign-in is configured, which
+// AI engine is active and whether the agent service answers. AI being down
+// does not fail the check, because every non-AI flow still works.
 export async function GET() {
   let database = false;
   try {
@@ -26,8 +32,12 @@ export async function GET() {
       process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
     );
   const ok = database && signIn;
+  const ai = {
+    engine: activeEngine(),
+    agentService: await agentServiceAnswers(),
+  };
   return NextResponse.json(
-    { ok, database, signIn },
+    { ok, database, signIn, ai },
     { status: ok ? 200 : 503, headers: { "Cache-Control": "no-store" } },
   );
 }

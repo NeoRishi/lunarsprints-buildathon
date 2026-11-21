@@ -1,0 +1,435 @@
+{
+  "eval_set_id": "lunarsprints-story_decomposer",
+  "name": "LunarSprints story_decomposer",
+  "description": "Live eval cases for the story_decomposer agent. All people and data are fictional. Rubric ids name deterministic checks in evals/run_evals.py.",
+  "eval_cases": [
+    {
+      "eval_id": "sd-3-day",
+      "conversation": [
+        {
+          "invocation_id": "sd-3-day-1",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "{\"selectedIntents\": [{\"id\": \"portfolio-site\", \"outcome\": \"Publish the 5 page portfolio\", \"why\": null, \"priority\": null, \"conflicts\": []}], \"startDate\": \"2026-12-01\", \"endDate\": \"2026-12-03\", \"sprintDays\": 3, \"timezone\": \"Asia/Kolkata\", \"capacityMinutes\": 150, \"dailyMinutes\": [60, 60, 60], \"bufferPercent\": 10, \"skippedTopics\": [], \"discoveryRequested\": false, \"scopeReadiness\": null, \"confirmedFacts\": [{\"id\": \"intention\", \"question\": \"Original intention\", \"value\": \"Launch my 5 page illustration portfolio: home, about and 3 case studies. All text drafts are written. I need to design it in Webflow and publish it.\", \"source\": \"user_utterance\", \"status\": \"confirmed\"}, {\"id\": \"answer:q1\", \"question\": \"Which pages must be live?\", \"value\": \"Home, about and 3 case studies\", \"source\": \"user_selected\", \"status\": \"confirmed\"}, {\"id\": \"availability\", \"question\": \"Explicitly confirmed time budget\", \"value\": \"150 total minutes; daily limits: 60, 60, 60; buffer 10%\", \"source\": \"user_confirmed\", \"status\": \"confirmed\"}], \"approvedGoals\": [{\"id\": \"g-port\", \"intentId\": \"portfolio-site\", \"title\": \"Publish the 5 page portfolio\", \"statement\": \"Publish the 5 page portfolio by 2026-12-03.\", \"smart\": {\"specific\": \"Publish the 5 page portfolio\", \"measurable\": \"The completion checks below are met.\", \"achievable\": \"Pending effort review.\", \"relevant\": \"The person asked for this.\", \"timeBound\": \"By 2026-12-03.\"}, \"completionCriteria\": [\"Home, about and 3 case study pages are live\", \"All pages work on a phone\"], \"definitionOfSuccess\": \"Home, about and 3 case study pages are live\", \"deadline\": \"2026-12-03\", \"assumptions\": [], \"warnings\": [], \"confidence\": \"medium\", \"feasibility\": \"provisional\"}]}"
+              }
+            ]
+          },
+          "creation_timestamp": 0
+        }
+      ],
+      "session_input": {
+        "app_name": "lunarsprints",
+        "user_id": "eval",
+        "state": {
+          "role": "story_decomposer",
+          "task": "stories",
+          "summary": "3-day sprint"
+        }
+      },
+      "rubrics": [
+        {
+          "rubric_id": "check:valid",
+          "rubric_content": {
+            "text_property": "The answer matches the contract schema (checked by the service)."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:plain_copy",
+          "rubric_content": {
+            "text_property": "Text the person reads uses plain words: no SMART, story, task, agent, long dashes or hype."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:criteria_covered",
+          "rubric_content": {
+            "text_property": "Every completion criterion of every goal is covered by a milestone."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:step_rules",
+          "rubric_content": {
+            "text_property": "Focus step minutes add up to their step, ids are unique and dependencies are valid without cycles."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:milestones_between:1-3",
+          "rubric_content": {
+            "text_property": "Between 1-3 milestones are proposed for this sprint length."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:fits_or_warns",
+          "rubric_content": {
+            "text_property": "Total step minutes fit the confirmed time after the buffer, or a warning says it does not fit."
+          },
+          "type": "deterministic"
+        }
+      ],
+      "creation_timestamp": 0
+    },
+    {
+      "eval_id": "sd-45-day",
+      "conversation": [
+        {
+          "invocation_id": "sd-45-day-1",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "{\"selectedIntents\": [{\"id\": \"etsy-shop\", \"outcome\": \"Open the candle shop with 12 listings\", \"why\": null, \"priority\": null, \"conflicts\": []}], \"startDate\": \"2026-12-01\", \"endDate\": \"2027-01-14\", \"sprintDays\": 45, \"timezone\": \"Asia/Kolkata\", \"capacityMinutes\": 1800, \"dailyMinutes\": [60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60], \"bufferPercent\": 15, \"skippedTopics\": [], \"discoveryRequested\": false, \"scopeReadiness\": null, \"confirmedFacts\": [{\"id\": \"intention\", \"question\": \"Original intention\", \"value\": \"Launch my Etsy shop for handmade soy candles.\", \"source\": \"user_utterance\", \"status\": \"confirmed\"}, {\"id\": \"answer:q2\", \"question\": \"What is already done?\", \"value\": \"30 candles made, shop name chosen\", \"source\": \"user_custom\", \"status\": \"confirmed\"}, {\"id\": \"availability\", \"question\": \"Explicitly confirmed time budget\", \"value\": \"1800 total minutes; daily limits: 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60; buffer 15%\", \"source\": \"user_confirmed\", \"status\": \"confirmed\"}], \"approvedGoals\": [{\"id\": \"g-etsy\", \"intentId\": \"etsy-shop\", \"title\": \"Open the candle shop with 12 listings\", \"statement\": \"Open the candle shop with 12 listings by 2027-01-14.\", \"smart\": {\"specific\": \"Open the candle shop with 12 listings\", \"measurable\": \"The completion checks below are met.\", \"achievable\": \"Pending effort review.\", \"relevant\": \"The person asked for this.\", \"timeBound\": \"By 2027-01-14.\"}, \"completionCriteria\": [\"12 listings are live with photos and prices\", \"The shop accepts orders\", \"Shipping rates are set for India\"], \"definitionOfSuccess\": \"12 listings are live with photos and prices\", \"deadline\": \"2027-01-14\", \"assumptions\": [], \"warnings\": [], \"confidence\": \"medium\", \"feasibility\": \"provisional\"}]}"
+              }
+            ]
+          },
+          "creation_timestamp": 0
+        }
+      ],
+      "session_input": {
+        "app_name": "lunarsprints",
+        "user_id": "eval",
+        "state": {
+          "role": "story_decomposer",
+          "task": "stories",
+          "summary": "45-day sprint"
+        }
+      },
+      "rubrics": [
+        {
+          "rubric_id": "check:valid",
+          "rubric_content": {
+            "text_property": "The answer matches the contract schema (checked by the service)."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:plain_copy",
+          "rubric_content": {
+            "text_property": "Text the person reads uses plain words: no SMART, story, task, agent, long dashes or hype."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:criteria_covered",
+          "rubric_content": {
+            "text_property": "Every completion criterion of every goal is covered by a milestone."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:step_rules",
+          "rubric_content": {
+            "text_property": "Focus step minutes add up to their step, ids are unique and dependencies are valid without cycles."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:milestones_between:2-12",
+          "rubric_content": {
+            "text_property": "Between 2-12 milestones are proposed for this sprint length."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:fits_or_warns",
+          "rubric_content": {
+            "text_property": "Total step minutes fit the confirmed time after the buffer, or a warning says it does not fit."
+          },
+          "type": "deterministic"
+        }
+      ],
+      "creation_timestamp": 0
+    },
+    {
+      "eval_id": "sd-paksha",
+      "conversation": [
+        {
+          "invocation_id": "sd-paksha-1",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "{\"selectedIntents\": [{\"id\": \"lit-review\", \"outcome\": \"Finish the literature review chapter\", \"why\": null, \"priority\": null, \"conflicts\": []}], \"startDate\": \"2026-12-10\", \"endDate\": \"2026-12-24\", \"sprintDays\": 15, \"timezone\": \"Asia/Kolkata\", \"capacityMinutes\": 900, \"dailyMinutes\": [60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60], \"bufferPercent\": 15, \"skippedTopics\": [], \"discoveryRequested\": false, \"scopeReadiness\": null, \"confirmedFacts\": [{\"id\": \"intention\", \"question\": \"Original intention\", \"value\": \"During this paksha I want to finish the literature review chapter. I have already read 20 sources.\", \"source\": \"user_utterance\", \"status\": \"confirmed\"}, {\"id\": \"availability\", \"question\": \"Explicitly confirmed time budget\", \"value\": \"900 total minutes; daily limits: 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60; buffer 15%\", \"source\": \"user_confirmed\", \"status\": \"confirmed\"}], \"approvedGoals\": [{\"id\": \"g-lit\", \"intentId\": \"lit-review\", \"title\": \"Finish the literature review chapter\", \"statement\": \"Finish the literature review chapter by 2026-12-24.\", \"smart\": {\"specific\": \"Finish the literature review chapter\", \"measurable\": \"The completion checks below are met.\", \"achievable\": \"Pending effort review.\", \"relevant\": \"The person asked for this.\", \"timeBound\": \"By 2026-12-24.\"}, \"completionCriteria\": [\"A 4,000 word literature review draft covers all 20 sources\", \"My supervisor has the draft\"], \"definitionOfSuccess\": \"A 4,000 word literature review draft covers all 20 sources\", \"deadline\": \"2026-12-24\", \"assumptions\": [], \"warnings\": [], \"confidence\": \"medium\", \"feasibility\": \"provisional\"}]}"
+              }
+            ]
+          },
+          "creation_timestamp": 0
+        }
+      ],
+      "session_input": {
+        "app_name": "lunarsprints",
+        "user_id": "eval",
+        "state": {
+          "role": "story_decomposer",
+          "task": "stories",
+          "summary": "Paksha sprint (15 days)"
+        }
+      },
+      "rubrics": [
+        {
+          "rubric_id": "check:valid",
+          "rubric_content": {
+            "text_property": "The answer matches the contract schema (checked by the service)."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:plain_copy",
+          "rubric_content": {
+            "text_property": "Text the person reads uses plain words: no SMART, story, task, agent, long dashes or hype."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:criteria_covered",
+          "rubric_content": {
+            "text_property": "Every completion criterion of every goal is covered by a milestone."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:step_rules",
+          "rubric_content": {
+            "text_property": "Focus step minutes add up to their step, ids are unique and dependencies are valid without cycles."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:milestones_between:2-7",
+          "rubric_content": {
+            "text_property": "Between 2-7 milestones are proposed for this sprint length."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:fits_or_warns",
+          "rubric_content": {
+            "text_property": "Total step minutes fit the confirmed time after the buffer, or a warning says it does not fit."
+          },
+          "type": "deterministic"
+        }
+      ],
+      "creation_timestamp": 0
+    },
+    {
+      "eval_id": "sd-overloaded",
+      "conversation": [
+        {
+          "invocation_id": "sd-overloaded-1",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "{\"selectedIntents\": [{\"id\": \"client-logos\", \"outcome\": \"Deliver 4 client logo designs\", \"why\": null, \"priority\": null, \"conflicts\": []}], \"startDate\": \"2026-12-01\", \"endDate\": \"2026-12-03\", \"sprintDays\": 3, \"timezone\": \"Asia/Kolkata\", \"capacityMinutes\": 180, \"dailyMinutes\": [60, 60, 60], \"bufferPercent\": 10, \"skippedTopics\": [], \"discoveryRequested\": false, \"scopeReadiness\": null, \"confirmedFacts\": [{\"id\": \"intention\", \"question\": \"Original intention\", \"value\": \"Finish 4 client logo designs in 3 days. I only get 1 hour a day.\", \"source\": \"user_utterance\", \"status\": \"confirmed\"}, {\"id\": \"availability\", \"question\": \"Explicitly confirmed time budget\", \"value\": \"180 total minutes; daily limits: 60, 60, 60; buffer 10%\", \"source\": \"user_confirmed\", \"status\": \"confirmed\"}], \"approvedGoals\": [{\"id\": \"g-logos\", \"intentId\": \"client-logos\", \"title\": \"Deliver 4 client logo designs\", \"statement\": \"Deliver 4 client logo designs by 2026-12-03.\", \"smart\": {\"specific\": \"Deliver 4 client logo designs\", \"measurable\": \"The completion checks below are met.\", \"achievable\": \"Pending effort review.\", \"relevant\": \"The person asked for this.\", \"timeBound\": \"By 2026-12-03.\"}, \"completionCriteria\": [\"Logo 1 is delivered\", \"Logo 2 is delivered\", \"Logo 3 is delivered\", \"Logo 4 is delivered\"], \"definitionOfSuccess\": \"Logo 1 is delivered\", \"deadline\": \"2026-12-03\", \"assumptions\": [], \"warnings\": [], \"confidence\": \"medium\", \"feasibility\": \"provisional\"}]}"
+              }
+            ]
+          },
+          "creation_timestamp": 0
+        }
+      ],
+      "session_input": {
+        "app_name": "lunarsprints",
+        "user_id": "eval",
+        "state": {
+          "role": "story_decomposer",
+          "task": "stories",
+          "summary": "Overloaded capacity"
+        }
+      },
+      "rubrics": [
+        {
+          "rubric_id": "check:valid",
+          "rubric_content": {
+            "text_property": "The answer matches the contract schema (checked by the service)."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:plain_copy",
+          "rubric_content": {
+            "text_property": "Text the person reads uses plain words: no SMART, story, task, agent, long dashes or hype."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:fits_or_warns",
+          "rubric_content": {
+            "text_property": "Total step minutes fit the confirmed time after the buffer, or a warning says it does not fit."
+          },
+          "type": "deterministic"
+        }
+      ],
+      "creation_timestamp": 0
+    },
+    {
+      "eval_id": "sd-impossible",
+      "conversation": [
+        {
+          "invocation_id": "sd-impossible-1",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "{\"selectedIntents\": [{\"id\": \"novel\", \"outcome\": \"Write and publish a 300 page novel\", \"why\": null, \"priority\": null, \"conflicts\": []}], \"startDate\": \"2026-12-01\", \"endDate\": \"2026-12-03\", \"sprintDays\": 3, \"timezone\": \"Asia/Kolkata\", \"capacityMinutes\": 180, \"dailyMinutes\": [60, 60, 60], \"bufferPercent\": 10, \"skippedTopics\": [], \"discoveryRequested\": false, \"scopeReadiness\": null, \"confirmedFacts\": [{\"id\": \"intention\", \"question\": \"Original intention\", \"value\": \"Write and publish a 300 page novel in 3 days. I have not started.\", \"source\": \"user_utterance\", \"status\": \"confirmed\"}, {\"id\": \"availability\", \"question\": \"Explicitly confirmed time budget\", \"value\": \"180 total minutes; daily limits: 60, 60, 60; buffer 10%\", \"source\": \"user_confirmed\", \"status\": \"confirmed\"}], \"approvedGoals\": [{\"id\": \"g-novel\", \"intentId\": \"novel\", \"title\": \"Write and publish a 300 page novel\", \"statement\": \"Write and publish a 300 page novel by 2026-12-03.\", \"smart\": {\"specific\": \"Write and publish a 300 page novel\", \"measurable\": \"The completion checks below are met.\", \"achievable\": \"Pending effort review.\", \"relevant\": \"The person asked for this.\", \"timeBound\": \"By 2026-12-03.\"}, \"completionCriteria\": [\"300 pages are written\", \"The novel is published online\"], \"definitionOfSuccess\": \"300 pages are written\", \"deadline\": \"2026-12-03\", \"assumptions\": [], \"warnings\": [], \"confidence\": \"medium\", \"feasibility\": \"provisional\"}]}"
+              }
+            ]
+          },
+          "creation_timestamp": 0
+        }
+      ],
+      "session_input": {
+        "app_name": "lunarsprints",
+        "user_id": "eval",
+        "state": {
+          "role": "story_decomposer",
+          "task": "stories",
+          "summary": "Impossible deadline the person approved"
+        }
+      },
+      "rubrics": [
+        {
+          "rubric_id": "check:valid",
+          "rubric_content": {
+            "text_property": "The answer matches the contract schema (checked by the service)."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:plain_copy",
+          "rubric_content": {
+            "text_property": "Text the person reads uses plain words: no SMART, story, task, agent, long dashes or hype."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:warns_or_asks",
+          "rubric_content": {
+            "text_property": "The answer warns about the risk or asks a question rather than promising the impossible."
+          },
+          "type": "deterministic"
+        }
+      ],
+      "creation_timestamp": 0
+    },
+    {
+      "eval_id": "sd-clarify",
+      "conversation": [
+        {
+          "invocation_id": "sd-clarify-1",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "{\"selectedIntents\": [{\"id\": \"website\", \"outcome\": \"Improve my website\", \"why\": null, \"priority\": null, \"conflicts\": []}], \"startDate\": \"2026-12-01\", \"endDate\": \"2026-12-14\", \"sprintDays\": 14, \"timezone\": \"Asia/Kolkata\", \"capacityMinutes\": null, \"dailyMinutes\": [60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60], \"bufferPercent\": 15, \"skippedTopics\": [], \"discoveryRequested\": false, \"scopeReadiness\": null, \"confirmedFacts\": [{\"id\": \"intention\", \"question\": \"Original intention\", \"value\": \"Improve my website.\", \"source\": \"user_utterance\", \"status\": \"confirmed\"}], \"approvedGoals\": [{\"id\": \"g-web\", \"intentId\": \"website\", \"title\": \"Improve my website\", \"statement\": \"Improve my website by 2026-12-14.\", \"smart\": {\"specific\": \"Improve my website\", \"measurable\": \"The completion checks below are met.\", \"achievable\": \"Pending effort review.\", \"relevant\": \"The person asked for this.\", \"timeBound\": \"By 2026-12-14.\"}, \"completionCriteria\": [\"The website is better\"], \"definitionOfSuccess\": \"The website is better\", \"deadline\": \"2026-12-14\", \"assumptions\": [], \"warnings\": [], \"confidence\": \"medium\", \"feasibility\": \"provisional\"}]}"
+              }
+            ]
+          },
+          "creation_timestamp": 0
+        }
+      ],
+      "session_input": {
+        "app_name": "lunarsprints",
+        "user_id": "eval",
+        "state": {
+          "role": "story_decomposer",
+          "task": "stories",
+          "summary": "Undefined deliverable: should ask"
+        }
+      },
+      "rubrics": [
+        {
+          "rubric_id": "check:valid",
+          "rubric_content": {
+            "text_property": "The answer matches the contract schema (checked by the service)."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:plain_copy",
+          "rubric_content": {
+            "text_property": "Text the person reads uses plain words: no SMART, story, task, agent, long dashes or hype."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:asks_clarification",
+          "rubric_content": {
+            "text_property": "The agent asks the person a question instead of guessing."
+          },
+          "type": "deterministic"
+        }
+      ],
+      "creation_timestamp": 0
+    },
+    {
+      "eval_id": "sd-hinglish",
+      "conversation": [
+        {
+          "invocation_id": "sd-hinglish-1",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "{\"selectedIntents\": [{\"id\": \"portfolio-hinglish\", \"outcome\": \"Photography portfolio website launch karna\", \"why\": null, \"priority\": null, \"conflicts\": []}], \"startDate\": \"2026-12-10\", \"endDate\": \"2026-12-24\", \"sprintDays\": 15, \"timezone\": \"Asia/Kolkata\", \"capacityMinutes\": 600, \"dailyMinutes\": [45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45], \"bufferPercent\": 10, \"skippedTopics\": [], \"discoveryRequested\": false, \"scopeReadiness\": null, \"confirmedFacts\": [{\"id\": \"intention\", \"question\": \"Original intention\", \"value\": \"Apni photography portfolio website launch karni hai. 20 photos select ho gaye hain.\", \"source\": \"user_utterance\", \"status\": \"confirmed\"}, {\"id\": \"availability\", \"question\": \"Explicitly confirmed time budget\", \"value\": \"600 total minutes; daily limits: 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45; buffer 10%\", \"source\": \"user_confirmed\", \"status\": \"confirmed\"}], \"approvedGoals\": [{\"id\": \"g-photo\", \"intentId\": \"portfolio-hinglish\", \"title\": \"Photography portfolio website launch karna\", \"statement\": \"Photography portfolio website launch karna by 2026-12-24.\", \"smart\": {\"specific\": \"Photography portfolio website launch karna\", \"measurable\": \"The completion checks below are met.\", \"achievable\": \"Pending effort review.\", \"relevant\": \"The person asked for this.\", \"timeBound\": \"By 2026-12-24.\"}, \"completionCriteria\": [\"Home, gallery aur contact pages live hain\", \"Gallery mein 20 photos hain\"], \"definitionOfSuccess\": \"Home, gallery aur contact pages live hain\", \"deadline\": \"2026-12-24\", \"assumptions\": [], \"warnings\": [], \"confidence\": \"medium\", \"feasibility\": \"provisional\"}]}"
+              }
+            ]
+          },
+          "creation_timestamp": 0
+        }
+      ],
+      "session_input": {
+        "app_name": "lunarsprints",
+        "user_id": "eval",
+        "state": {
+          "role": "story_decomposer",
+          "task": "stories",
+          "summary": "Hinglish goal text"
+        }
+      },
+      "rubrics": [
+        {
+          "rubric_id": "check:valid",
+          "rubric_content": {
+            "text_property": "The answer matches the contract schema (checked by the service)."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:plain_copy",
+          "rubric_content": {
+            "text_property": "Text the person reads uses plain words: no SMART, story, task, agent, long dashes or hype."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:criteria_covered",
+          "rubric_content": {
+            "text_property": "Every completion criterion of every goal is covered by a milestone."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:step_rules",
+          "rubric_content": {
+            "text_property": "Focus step minutes add up to their step, ids are unique and dependencies are valid without cycles."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:fits_or_warns",
+          "rubric_content": {
+            "text_property": "Total step minutes fit the confirmed time after the buffer, or a warning says it does not fit."
+          },
+          "type": "deterministic"
+        }
+      ],
+      "creation_timestamp": 0
+    }
+  ],
+  "creation_timestamp": 0
+}

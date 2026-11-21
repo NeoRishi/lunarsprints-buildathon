@@ -1,0 +1,485 @@
+{
+  "eval_set_id": "lunarsprints-smart_goal",
+  "name": "LunarSprints smart_goal",
+  "description": "Live eval cases for the smart_goal agent. All people and data are fictional. Rubric ids name deterministic checks in evals/run_evals.py.",
+  "eval_cases": [
+    {
+      "eval_id": "sg-clarify-vague",
+      "conversation": [
+        {
+          "invocation_id": "sg-clarify-vague-1",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "{\"selectedIntents\": [{\"id\": \"get-fit\", \"outcome\": \"Get fit\", \"why\": null, \"priority\": null, \"conflicts\": []}], \"startDate\": \"2026-12-01\", \"endDate\": \"2026-12-14\", \"sprintDays\": 14, \"timezone\": \"Asia/Kolkata\", \"capacityMinutes\": null, \"dailyMinutes\": [60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60], \"bufferPercent\": 15, \"skippedTopics\": [], \"discoveryRequested\": false, \"scopeReadiness\": null, \"confirmedFacts\": [{\"id\": \"intention\", \"question\": \"Original intention\", \"value\": \"I want to get fit.\", \"source\": \"user_utterance\", \"status\": \"confirmed\"}]}"
+              }
+            ]
+          },
+          "creation_timestamp": 0
+        }
+      ],
+      "session_input": {
+        "app_name": "lunarsprints",
+        "user_id": "eval",
+        "state": {
+          "role": "smart_goal",
+          "task": "clarify",
+          "summary": "Vague intention: should ask"
+        }
+      },
+      "rubrics": [
+        {
+          "rubric_id": "check:valid",
+          "rubric_content": {
+            "text_property": "The answer matches the contract schema (checked by the service)."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:plain_copy",
+          "rubric_content": {
+            "text_property": "Text the person reads uses plain words: no SMART, story, task, agent, long dashes or hype."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:status_in:ok|needs_clarification",
+          "rubric_content": {
+            "text_property": "The answer status is one of ok|needs_clarification."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:questions_min:1",
+          "rubric_content": {
+            "text_property": "At least 1 follow-up question is asked."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:question_rules",
+          "rubric_content": {
+            "text_property": "Questions use selected intention ids, 2 to 4 options, and at most one recommended option with a stated basis."
+          },
+          "type": "deterministic"
+        }
+      ],
+      "creation_timestamp": 0
+    },
+    {
+      "eval_id": "sg-clarify-detailed",
+      "conversation": [
+        {
+          "invocation_id": "sg-clarify-detailed-1",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "{\"selectedIntents\": [{\"id\": \"portfolio-site\", \"outcome\": \"Launch a 5 page illustration portfolio site\", \"why\": null, \"priority\": null, \"conflicts\": []}], \"startDate\": \"2026-12-01\", \"endDate\": \"2026-12-03\", \"sprintDays\": 3, \"timezone\": \"Asia/Kolkata\", \"capacityMinutes\": 150, \"dailyMinutes\": [60, 60, 60], \"bufferPercent\": 10, \"skippedTopics\": [], \"discoveryRequested\": false, \"scopeReadiness\": null, \"confirmedFacts\": [{\"id\": \"intention\", \"question\": \"Original intention\", \"value\": \"Launch my 5 page illustration portfolio: home, about and 3 case studies. All text drafts are written. I need to design it in Webflow and publish it.\", \"source\": \"user_utterance\", \"status\": \"confirmed\"}, {\"id\": \"availability\", \"question\": \"Explicitly confirmed time budget\", \"value\": \"150 total minutes; daily limits: 60, 60, 60; buffer 10%\", \"source\": \"user_confirmed\", \"status\": \"confirmed\"}]}"
+              }
+            ]
+          },
+          "creation_timestamp": 0
+        }
+      ],
+      "session_input": {
+        "app_name": "lunarsprints",
+        "user_id": "eval",
+        "state": {
+          "role": "smart_goal",
+          "task": "clarify",
+          "summary": "Detailed intention: few questions"
+        }
+      },
+      "rubrics": [
+        {
+          "rubric_id": "check:valid",
+          "rubric_content": {
+            "text_property": "The answer matches the contract schema (checked by the service)."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:plain_copy",
+          "rubric_content": {
+            "text_property": "Text the person reads uses plain words: no SMART, story, task, agent, long dashes or hype."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:questions_max:3",
+          "rubric_content": {
+            "text_property": "At most 3 follow-up questions are asked."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:question_rules",
+          "rubric_content": {
+            "text_property": "Questions use selected intention ids, 2 to 4 options, and at most one recommended option with a stated basis."
+          },
+          "type": "deterministic"
+        }
+      ],
+      "creation_timestamp": 0
+    },
+    {
+      "eval_id": "sg-goals-3-day",
+      "conversation": [
+        {
+          "invocation_id": "sg-goals-3-day-1",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "{\"selectedIntents\": [{\"id\": \"portfolio-site\", \"outcome\": \"Launch a 5 page illustration portfolio site\", \"why\": null, \"priority\": null, \"conflicts\": []}], \"startDate\": \"2026-12-01\", \"endDate\": \"2026-12-03\", \"sprintDays\": 3, \"timezone\": \"Asia/Kolkata\", \"capacityMinutes\": 150, \"dailyMinutes\": [60, 60, 60], \"bufferPercent\": 10, \"skippedTopics\": [], \"discoveryRequested\": false, \"scopeReadiness\": null, \"confirmedFacts\": [{\"id\": \"intention\", \"question\": \"Original intention\", \"value\": \"Launch my 5 page illustration portfolio: home, about and 3 case studies. All text drafts are written. I need to design it in Webflow and publish it.\", \"source\": \"user_utterance\", \"status\": \"confirmed\"}, {\"id\": \"answer:q1\", \"question\": \"Which pages must be live?\", \"value\": \"Home, about and 3 case studies\", \"source\": \"user_selected\", \"status\": \"confirmed\"}, {\"id\": \"availability\", \"question\": \"Explicitly confirmed time budget\", \"value\": \"150 total minutes; daily limits: 60, 60, 60; buffer 10%\", \"source\": \"user_confirmed\", \"status\": \"confirmed\"}], \"previousProposals\": [], \"feedback\": null, \"clarificationSkipped\": false}"
+              }
+            ]
+          },
+          "creation_timestamp": 0
+        }
+      ],
+      "session_input": {
+        "app_name": "lunarsprints",
+        "user_id": "eval",
+        "state": {
+          "role": "smart_goal",
+          "task": "goals",
+          "summary": "3-day sprint goal"
+        }
+      },
+      "rubrics": [
+        {
+          "rubric_id": "check:valid",
+          "rubric_content": {
+            "text_property": "The answer matches the contract schema (checked by the service)."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:plain_copy",
+          "rubric_content": {
+            "text_property": "Text the person reads uses plain words: no SMART, story, task, agent, long dashes or hype."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:status:ok",
+          "rubric_content": {
+            "text_property": "The answer status is ok."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:goal_rules",
+          "rubric_content": {
+            "text_property": "Goals use selected intention ids, deadlines inside the sprint and provisional feasibility."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:evidence_known",
+          "rubric_content": {
+            "text_property": "Readiness evidence cites only ids from confirmedFacts."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:readiness:ready",
+          "rubric_content": {
+            "text_property": "Readiness status is ready."
+          },
+          "type": "deterministic"
+        }
+      ],
+      "creation_timestamp": 0
+    },
+    {
+      "eval_id": "sg-goals-45-day",
+      "conversation": [
+        {
+          "invocation_id": "sg-goals-45-day-1",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "{\"selectedIntents\": [{\"id\": \"etsy-shop\", \"outcome\": \"Launch an Etsy shop for handmade soy candles\", \"why\": null, \"priority\": null, \"conflicts\": []}], \"startDate\": \"2026-12-01\", \"endDate\": \"2027-01-14\", \"sprintDays\": 45, \"timezone\": \"Asia/Kolkata\", \"capacityMinutes\": null, \"dailyMinutes\": [60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60], \"bufferPercent\": 15, \"skippedTopics\": [], \"discoveryRequested\": false, \"scopeReadiness\": null, \"confirmedFacts\": [{\"id\": \"intention\", \"question\": \"Original intention\", \"value\": \"Launch my Etsy shop for handmade soy candles in the next six weeks.\", \"source\": \"user_utterance\", \"status\": \"confirmed\"}, {\"id\": \"answer:q1\", \"question\": \"What does launched mean for you?\", \"value\": \"12 candle listings live with photos and prices, and the shop open for orders\", \"source\": \"user_custom\", \"status\": \"confirmed\"}, {\"id\": \"answer:q2\", \"question\": \"What is already done?\", \"value\": \"I have made 30 candles and chosen the shop name\", \"source\": \"user_custom\", \"status\": \"confirmed\"}], \"previousProposals\": [], \"feedback\": null, \"clarificationSkipped\": false}"
+              }
+            ]
+          },
+          "creation_timestamp": 0
+        }
+      ],
+      "session_input": {
+        "app_name": "lunarsprints",
+        "user_id": "eval",
+        "state": {
+          "role": "smart_goal",
+          "task": "goals",
+          "summary": "45-day sprint goal"
+        }
+      },
+      "rubrics": [
+        {
+          "rubric_id": "check:valid",
+          "rubric_content": {
+            "text_property": "The answer matches the contract schema (checked by the service)."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:plain_copy",
+          "rubric_content": {
+            "text_property": "Text the person reads uses plain words: no SMART, story, task, agent, long dashes or hype."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:status:ok",
+          "rubric_content": {
+            "text_property": "The answer status is ok."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:goal_rules",
+          "rubric_content": {
+            "text_property": "Goals use selected intention ids, deadlines inside the sprint and provisional feasibility."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:evidence_known",
+          "rubric_content": {
+            "text_property": "Readiness evidence cites only ids from confirmedFacts."
+          },
+          "type": "deterministic"
+        }
+      ],
+      "creation_timestamp": 0
+    },
+    {
+      "eval_id": "sg-goals-impossible",
+      "conversation": [
+        {
+          "invocation_id": "sg-goals-impossible-1",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "{\"selectedIntents\": [{\"id\": \"novel\", \"outcome\": \"Write and publish a 300 page novel\", \"why\": null, \"priority\": null, \"conflicts\": []}], \"startDate\": \"2026-12-01\", \"endDate\": \"2026-12-03\", \"sprintDays\": 3, \"timezone\": \"Asia/Kolkata\", \"capacityMinutes\": null, \"dailyMinutes\": [60, 60, 60], \"bufferPercent\": 15, \"skippedTopics\": [], \"discoveryRequested\": false, \"scopeReadiness\": null, \"confirmedFacts\": [{\"id\": \"intention\", \"question\": \"Original intention\", \"value\": \"Write and publish a 300 page novel in the next 3 days. I have not started writing.\", \"source\": \"user_utterance\", \"status\": \"confirmed\"}, {\"id\": \"answer:q1\", \"question\": \"How much time per day?\", \"value\": \"1 hour a day\", \"source\": \"user_selected\", \"status\": \"confirmed\"}], \"previousProposals\": [], \"feedback\": null, \"clarificationSkipped\": false}"
+              }
+            ]
+          },
+          "creation_timestamp": 0
+        }
+      ],
+      "session_input": {
+        "app_name": "lunarsprints",
+        "user_id": "eval",
+        "state": {
+          "role": "smart_goal",
+          "task": "goals",
+          "summary": "Impossible deadline"
+        }
+      },
+      "rubrics": [
+        {
+          "rubric_id": "check:valid",
+          "rubric_content": {
+            "text_property": "The answer matches the contract schema (checked by the service)."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:plain_copy",
+          "rubric_content": {
+            "text_property": "Text the person reads uses plain words: no SMART, story, task, agent, long dashes or hype."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:warns_or_asks",
+          "rubric_content": {
+            "text_property": "The answer warns about the risk or asks a question rather than promising the impossible."
+          },
+          "type": "deterministic"
+        }
+      ],
+      "creation_timestamp": 0
+    },
+    {
+      "eval_id": "sg-goals-discovery",
+      "conversation": [
+        {
+          "invocation_id": "sg-goals-discovery-1",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "{\"selectedIntents\": [{\"id\": \"thesis\", \"outcome\": \"Write my master's thesis\", \"why\": null, \"priority\": null, \"conflicts\": []}], \"startDate\": \"2026-12-10\", \"endDate\": \"2026-12-24\", \"sprintDays\": 15, \"timezone\": \"Asia/Kolkata\", \"capacityMinutes\": null, \"dailyMinutes\": [60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60], \"bufferPercent\": 15, \"skippedTopics\": [], \"discoveryRequested\": true, \"scopeReadiness\": null, \"confirmedFacts\": [{\"id\": \"intention\", \"question\": \"Original intention\", \"value\": \"I need to make progress on my master's thesis.\", \"source\": \"user_utterance\", \"status\": \"confirmed\"}, {\"id\": \"answer:q1\", \"question\": \"Which part of the thesis is in scope?\", \"value\": \"The user does not know this detail yet.\", \"source\": \"user_unknown\", \"status\": \"confirmed\"}], \"previousProposals\": [], \"feedback\": null, \"clarificationSkipped\": false}"
+              }
+            ]
+          },
+          "creation_timestamp": 0
+        }
+      ],
+      "session_input": {
+        "app_name": "lunarsprints",
+        "user_id": "eval",
+        "state": {
+          "role": "smart_goal",
+          "task": "goals",
+          "summary": "Scope unknown, discovery requested"
+        }
+      },
+      "rubrics": [
+        {
+          "rubric_id": "check:valid",
+          "rubric_content": {
+            "text_property": "The answer matches the contract schema (checked by the service)."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:plain_copy",
+          "rubric_content": {
+            "text_property": "Text the person reads uses plain words: no SMART, story, task, agent, long dashes or hype."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:mode:discovery",
+          "rubric_content": {
+            "text_property": "Readiness mode is discovery."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:goal_rules",
+          "rubric_content": {
+            "text_property": "Goals use selected intention ids, deadlines inside the sprint and provisional feasibility."
+          },
+          "type": "deterministic"
+        }
+      ],
+      "creation_timestamp": 0
+    },
+    {
+      "eval_id": "sg-readiness-needs-scope",
+      "conversation": [
+        {
+          "invocation_id": "sg-readiness-needs-scope-1",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "{\"selectedIntents\": [{\"id\": \"book\", \"outcome\": \"Revise my book\", \"why\": null, \"priority\": null, \"conflicts\": []}], \"startDate\": \"2026-12-01\", \"endDate\": \"2026-12-14\", \"sprintDays\": 14, \"timezone\": \"Asia/Kolkata\", \"capacityMinutes\": null, \"dailyMinutes\": [60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60], \"bufferPercent\": 15, \"skippedTopics\": [], \"discoveryRequested\": false, \"scopeReadiness\": null, \"confirmedFacts\": [{\"id\": \"intention\", \"question\": \"Original intention\", \"value\": \"Revise all the chapters of my book.\", \"source\": \"user_utterance\", \"status\": \"confirmed\"}], \"approvedGoals\": [{\"id\": \"g-book\", \"intentId\": \"book\", \"title\": \"Revise all chapters of the book\", \"statement\": \"Revise all chapters of the book by 2026-12-14.\", \"smart\": {\"specific\": \"Revise all chapters of the book\", \"measurable\": \"The completion checks below are met.\", \"achievable\": \"Pending effort review.\", \"relevant\": \"The person asked for this.\", \"timeBound\": \"By 2026-12-14.\"}, \"completionCriteria\": [\"Every chapter is revised\"], \"definitionOfSuccess\": \"Every chapter is revised\", \"deadline\": \"2026-12-14\", \"assumptions\": [], \"warnings\": [], \"confidence\": \"medium\", \"feasibility\": \"provisional\"}]}"
+              }
+            ]
+          },
+          "creation_timestamp": 0
+        }
+      ],
+      "session_input": {
+        "app_name": "lunarsprints",
+        "user_id": "eval",
+        "state": {
+          "role": "smart_goal",
+          "task": "readiness",
+          "summary": "Unbounded scope: should ask"
+        }
+      },
+      "rubrics": [
+        {
+          "rubric_id": "check:valid",
+          "rubric_content": {
+            "text_property": "The answer matches the contract schema (checked by the service)."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:plain_copy",
+          "rubric_content": {
+            "text_property": "Text the person reads uses plain words: no SMART, story, task, agent, long dashes or hype."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:readiness:needs_scope",
+          "rubric_content": {
+            "text_property": "Readiness status is needs_scope."
+          },
+          "type": "deterministic"
+        }
+      ],
+      "creation_timestamp": 0
+    },
+    {
+      "eval_id": "sg-goals-hinglish",
+      "conversation": [
+        {
+          "invocation_id": "sg-goals-hinglish-1",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "{\"selectedIntents\": [{\"id\": \"portfolio-hinglish\", \"outcome\": \"Apni photography portfolio website launch karni hai\", \"why\": null, \"priority\": null, \"conflicts\": []}], \"startDate\": \"2026-12-10\", \"endDate\": \"2026-12-24\", \"sprintDays\": 15, \"timezone\": \"Asia/Kolkata\", \"capacityMinutes\": null, \"dailyMinutes\": [45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45], \"bufferPercent\": 15, \"skippedTopics\": [], \"discoveryRequested\": false, \"scopeReadiness\": null, \"confirmedFacts\": [{\"id\": \"intention\", \"question\": \"Original intention\", \"value\": \"Apni photography portfolio website launch karni hai. 20 best photos already select kar liye hain. Bas 3 pages chahiye: home, gallery, contact.\", \"source\": \"user_utterance\", \"status\": \"confirmed\"}, {\"id\": \"answer:q1\", \"question\": \"Kitna time roz?\", \"value\": \"Roz 45 minute\", \"source\": \"user_custom\", \"status\": \"confirmed\"}], \"previousProposals\": [], \"feedback\": null, \"clarificationSkipped\": false}"
+              }
+            ]
+          },
+          "creation_timestamp": 0
+        }
+      ],
+      "session_input": {
+        "app_name": "lunarsprints",
+        "user_id": "eval",
+        "state": {
+          "role": "smart_goal",
+          "task": "goals",
+          "summary": "Hinglish input"
+        }
+      },
+      "rubrics": [
+        {
+          "rubric_id": "check:valid",
+          "rubric_content": {
+            "text_property": "The answer matches the contract schema (checked by the service)."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:plain_copy",
+          "rubric_content": {
+            "text_property": "Text the person reads uses plain words: no SMART, story, task, agent, long dashes or hype."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:status:ok",
+          "rubric_content": {
+            "text_property": "The answer status is ok."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:goal_rules",
+          "rubric_content": {
+            "text_property": "Goals use selected intention ids, deadlines inside the sprint and provisional feasibility."
+          },
+          "type": "deterministic"
+        },
+        {
+          "rubric_id": "check:evidence_known",
+          "rubric_content": {
+            "text_property": "Readiness evidence cites only ids from confirmedFacts."
+          },
+          "type": "deterministic"
+        }
+      ],
+      "creation_timestamp": 0
+    }
+  ],
+  "creation_timestamp": 0
+}

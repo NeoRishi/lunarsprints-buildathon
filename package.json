@@ -18,7 +18,14 @@
     "db:migrate:test": "tsx --env-file-if-exists=.env.local scripts/migrate.ts --test",
     "emulators": "firebase emulators:start --only auth --project lunarsprints-62d7d",
     "dev:local": "firebase emulators:exec --only auth --ui --project lunarsprints-62d7d \"npm run dev\"",
-    "test:rls": "vitest run --config vitest.integration.config.ts tests/rls.test.ts"
+    "test:rls": "vitest run --config vitest.integration.config.ts tests/rls.test.ts",
+    "contracts:build": "tsx scripts/contracts-build.ts",
+    "contracts:check": "tsx scripts/contracts-build.ts --check",
+    "agents:dev": "cd agents-service && uv run --env-file ../.env.local python -m lunarsprints_agents",
+    "agents:check": "cd agents-service && uv sync --locked && uv run ruff check . && uv run ruff format --check . && uv run mypy && uv run pytest -q",
+    "eval:agents": "cd agents-service && uv run --env-file ../.env.local python evals/run_evals.py",
+    "dev:all": "firebase emulators:exec --only auth --ui --project lunarsprints-62d7d \"tsx scripts/dev-all.ts\"",
+    "test:ai-planning": "tsx --env-file-if-exists=.env.local scripts/ai-planning-check.ts"
   },
   "dependencies": {
     "@fontsource/geist-sans": "5.3.0",

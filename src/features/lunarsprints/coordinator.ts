@@ -45,7 +45,8 @@ import {
   validateStories,
   unique,
 } from "./domain";
-import type { Intelligence } from "./agents/intelligence";
+import { checkAiProposal, type Intelligence } from "./agents/intelligence";
+import { scheduleNotesSchema } from "./agents/contract";
 import { NeedsClarification } from "./agents/outcomes";
 import { clarificationBase, planningFacts } from "./planning";
 import {
@@ -298,7 +299,9 @@ export async function coordinate(
       planningContext(),
       clarificationInstructions,
     );
-    validateQuestions(s.clarification, s.selectedIntentIds);
+    checkAiProposal(() =>
+      validateQuestions(s.clarification!, s.selectedIntentIds),
+    );
     s.stage = s.clarification.questions.length ? "clarify" : "goals";
     s.assistantMessage = s.clarification.questions.length
       ? "A few relevant questions. Your answers shape the plan."
@@ -429,9 +432,11 @@ export async function coordinate(
           },
           "Your task in this session is intention extraction, not final goal drafting. Extract distinct intentions and only user-stated facts. Give each intent a unique id. Include baseline, uncertainties and constraints. No invented values or motivation. Return status ok with the assessment payload even when details are missing: put unknowns in uncertainties and use null for unstated facts. The SMART specialist owns the next clarification questionnaire; missing launch scope, progress or success measures must not block extraction of a recognizable intention.",
         );
-        unique(
-          s.assessment.intents.map((i) => i.id),
-          "intention",
+        checkAiProposal(() =>
+          unique(
+            s.assessment!.intents.map((i) => i.id),
+            "intention",
+          ),
         );
         s.selectedIntentIds =
           s.assessment.intents.length === 1 ? [s.assessment.intents[0].id] : [];
@@ -517,7 +522,7 @@ export async function coordinate(
           "invalid_model_output",
           422,
         );
-        validateGoals(s, result.goals);
+        checkAiProposal(() => validateGoals(s, result.goals));
         s.goals = result.goals;
         clearAfterGoals();
         s.scopeReadiness = { ...result.readiness, goalsHash: hash(s.goals) };
@@ -587,7 +592,7 @@ export async function coordinate(
           "invalid_model_output",
           422,
         );
-        validateStories(s, proposal.stories);
+        checkAiProposal(() => validateStories(s, proposal.stories));
         s.scheduleAdvice = null;
         s.scheduleConflict = null;
         s.stories = proposal.stories;
@@ -660,7 +665,7 @@ export async function coordinate(
         try {
           const advice = await invoke(
             "scheduling",
-            z.object({ notes: z.array(z.string()).max(3) }),
+            scheduleNotesSchema,
             {
               validatedAllocations: s.allocations,
               capacity: capacity(s),
