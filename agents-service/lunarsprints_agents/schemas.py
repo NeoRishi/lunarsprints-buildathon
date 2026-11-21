@@ -51,9 +51,12 @@ class SchemaError(RuntimeError):
 _SAFE_INT = 9007199254740991
 
 
+def _small(value: Any) -> bool:
+    return isinstance(value, int | float) and abs(value) < _SAFE_INT
+
+
 def _small_range(node: dict[str, Any]) -> bool:
-    bounds = [node.get(k) for k in ("minimum", "maximum")]
-    return any(b is not None and abs(b) < _SAFE_INT for b in bounds)
+    return any(_small(node.get(k)) for k in ("minimum", "maximum"))
 
 
 def _model_name(path: str) -> str:
@@ -114,18 +117,23 @@ class _Builder:
             ]
         if kind in ("integer", "number"):
             base: type = int if kind == "integer" else float
+
             # Small number ranges (step minutes, priority) stay in the loose
             # form too: Gemini accepts them and they stop out-of-range answers.
             # Huge "safe integer" bounds zod adds by default are dropped.
+            def bound(key: str) -> Any:
+                value = node.get(key)
+                return value if self.strict or _small(value) else None
+
             if not self.strict and not _small_range(node):
                 return base
             return Annotated[
                 base,
                 Field(
-                    ge=node.get("minimum"),
-                    le=node.get("maximum"),
-                    gt=node.get("exclusiveMinimum"),
-                    lt=node.get("exclusiveMaximum"),
+                    ge=bound("minimum"),
+                    le=bound("maximum"),
+                    gt=bound("exclusiveMinimum"),
+                    lt=bound("exclusiveMaximum"),
                 ),
             ]
         if kind == "array":
