@@ -50,10 +50,10 @@ def _keys(schema: Any) -> set[str]:
     return found
 
 
-def test_generation_schema_keeps_shape_but_drops_limits() -> None:
+def test_generation_schema_keeps_shape_but_drops_text_and_size_limits() -> None:
     schema = generation_model(D, "story_decomposer", "stories").model_json_schema()
     keys = _keys(schema)
-    for limit in ("maxLength", "minLength", "maximum", "minimum", "maxItems", "pattern"):
+    for limit in ("maxLength", "minLength", "maxItems", "minItems", "pattern"):
         assert limit not in keys
     text = json.dumps(schema)
     assert '"definitionOfDone"' in text and '"coveredCriteria"' in text
@@ -137,3 +137,9 @@ def test_unsupported_schema_features_fail_loudly() -> None:
 def test_schema_files_are_generated_not_hand_edited() -> None:
     for file in Path(D).glob("*.json"):
         assert "npm run contracts:build" in json.loads(file.read_text())["description"]
+
+
+def test_generation_schema_keeps_small_number_ranges() -> None:
+    text = json.dumps(generation_model(D, "story_decomposer", "stories").model_json_schema())
+    assert '"maximum": 60' in text and '"maximum": 25' in text
+    assert "9007199254740991" not in text

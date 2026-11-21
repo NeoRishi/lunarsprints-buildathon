@@ -48,6 +48,14 @@ class SchemaError(RuntimeError):
     pass
 
 
+_SAFE_INT = 9007199254740991
+
+
+def _small_range(node: dict[str, Any]) -> bool:
+    bounds = [node.get(k) for k in ("minimum", "maximum")]
+    return any(b is not None and abs(b) < _SAFE_INT for b in bounds)
+
+
 def _model_name(path: str) -> str:
     parts = re.split(r"[^A-Za-z0-9]+", path)
     return "".join(p[:1].upper() + p[1:] for p in parts if p) or "Model"
@@ -57,8 +65,9 @@ class _Builder:
     def __init__(self, root: dict[str, Any], name: str, strict: bool = True) -> None:
         self.root = root
         self.name = name
-        # strict=False keeps the structure but drops length, size and pattern
-        # limits. Gemini rejects schemas with that many limits as too complex,
+        # strict=False keeps the structure and small number ranges but drops
+        # string length, pattern and array size limits. Gemini rejects schemas
+        # with those as too complex,
         # so the model generates against the loose form and the service then
         # checks the answer against the strict form.
         self.strict = strict
@@ -105,7 +114,10 @@ class _Builder:
             ]
         if kind in ("integer", "number"):
             base: type = int if kind == "integer" else float
-            if not self.strict:
+            # Small number ranges (step minutes, priority) stay in the loose
+            # form too: Gemini accepts them and they stop out-of-range answers.
+            # Huge "safe integer" bounds zod adds by default are dropped.
+            if not self.strict and not _small_range(node):
                 return base
             return Annotated[
                 base,
