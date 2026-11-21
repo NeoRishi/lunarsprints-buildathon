@@ -67,6 +67,10 @@ SKIP_KEYS = {
 }
 
 
+# The person's own deliverable may be a "short story": that is not jargon.
+ALLOWED = re.compile(r"short stor(y|ies)", re.IGNORECASE)
+
+
 def visible_text(node: Any, key: str = "") -> list[str]:
     if key in SKIP_KEYS:
         return []
@@ -200,7 +204,7 @@ def run_check(name: str, arg: str | None, a: Answer, d: Data) -> str | None:
                 for t in visible_text(p)
                 + visible_text(a.get("clarification") or {})
                 + [w["message"] for w in a["warnings"]]
-                if (m := BANNED.search(t))
+                if (m := BANNED.search(ALLOWED.sub("", t)))
             ),
             None,
         ),

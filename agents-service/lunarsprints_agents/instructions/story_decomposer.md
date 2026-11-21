@@ -20,7 +20,7 @@ Break approvedGoals into milestones, steps and focus steps.
 - Across all milestones of a goal, every completion criterion index must be covered. uncoveredCriteria must be an empty list; if you cannot cover one, ask instead.
 - priority is 1 (highest) to 3.
 - Every step: short unique id, title, motivation (why it matters), 1 to 60 minutes, and a definitionOfDone sentence.
-- Focus steps are optional. Each is 1 to 25 minutes, and the focus step minutes inside a step must add up exactly to that step's minutes. Use an empty list when a step needs no focus steps.
+- Focus steps are optional, and an empty list is the default. Add them only for a step of 30 minutes or more that clearly splits into parts. Each focus step is 1 to 25 minutes, and together they must add up exactly to the step's minutes. Before answering, add up the focus steps of every step; if any total is not exactly the step's minutes, fix it or use an empty list for that step.
 - dependencyIds may only reference other milestone ids in this answer and must never form a cycle.
 - Ids are unique across the whole answer, for example "m1", "m1-s1", "m1-s1-f1".
 - confirmedFacts are the person's own answers. Time estimates are proposals, not facts.
